@@ -1,4 +1,4 @@
-package com.backend.babysmile.service;
+package com.backend.babysmile.service.auth;
 
 import com.backend.babysmile.repository.TokenRepository;
 import jakarta.servlet.http.HttpServletRequest;

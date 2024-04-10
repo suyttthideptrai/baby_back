@@ -1,5 +1,6 @@
-package com.backend.babysmile.model;
+package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,20 +19,38 @@ import java.util.List;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(nullable = false, columnDefinition = "INTEGER(10)", unique = true)
+    private Long user_id;
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
+    private String user_real_name;
+    @Column(nullable = false, columnDefinition ="CHAR(10)")
     private String phone_number;
+    @Column(nullable = false, columnDefinition =  "VARCHAR(50)")
+    private String user_address;
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
+    private String user_email;
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    List<Order> orders;
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "user_id=" + user_id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", user_real_name='" + user_real_name + '\'' +
+                ", phone_number='" + phone_number + '\'' +
+                ", user_address='" + user_address + '\'' +
+                ", user_email='" + user_email + '\'' +
+                ", role=" + role +
                 '}';
     }
 

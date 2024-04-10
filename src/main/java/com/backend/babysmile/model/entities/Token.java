@@ -1,5 +1,6 @@
-package com.backend.babysmile.model;
+package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.TokenType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

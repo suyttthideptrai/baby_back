@@ -1,6 +1,6 @@
 package com.backend.babysmile.service;
 
-import com.backend.babysmile.model.User;
+import com.backend.babysmile.model.entities.User;
 import com.backend.babysmile.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

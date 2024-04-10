@@ -1,6 +1,6 @@
 package com.backend.babysmile.config;
 
-import com.backend.babysmile.service.JwtService;
+import com.backend.babysmile.service.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

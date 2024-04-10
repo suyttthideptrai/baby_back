@@ -1,6 +1,5 @@
 package com.backend.babysmile.config;
 
-import com.backend.babysmile.model.User;
 import com.backend.babysmile.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

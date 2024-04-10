@@ -1,11 +1,11 @@
-package com.backend.babysmile.service;
+package com.backend.babysmile.service.auth;
 
 import com.backend.babysmile.dto.request.LoginRequest;
 import com.backend.babysmile.dto.request.RegisterRequest;
 import com.backend.babysmile.dto.respond.AuthenticationResponse;
-import com.backend.babysmile.model.Token;
-import com.backend.babysmile.model.TokenType;
-import com.backend.babysmile.model.User;
+import com.backend.babysmile.model.entities.Token;
+import com.backend.babysmile.model.enums.TokenType;
+import com.backend.babysmile.model.entities.User;
 import com.backend.babysmile.repository.TokenRepository;
 import com.backend.babysmile.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +28,9 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .phone_number(request.getPhone_number())
+                .user_real_name(request.getUsername())
+                .user_email(request.getUsername())
+                .user_address(request.getUsername())
                 .role(request.getRole())
                 .build();
         var savedUser = repository.save(user);
@@ -66,16 +69,16 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
-    }
+//    private void revokeAllUserTokens(User user) {
+//        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+//        if (validUserTokens.isEmpty())
+//            return;
+//        validUserTokens.forEach(token -> {
+//            token.setExpired(true);
+//            token.setRevoked(true);
+//        });
+//        tokenRepository.saveAll(validUserTokens);
+//    }
 
 //    public void refreshToken(
 //            HttpServletRequest request,

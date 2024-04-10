@@ -34,6 +34,8 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers( "/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/crud/material/**").permitAll()
+                        .requestMatchers("/api/crud/vendor/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

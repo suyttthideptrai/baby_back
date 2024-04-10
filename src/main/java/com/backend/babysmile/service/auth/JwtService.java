@@ -1,4 +1,4 @@
-package com.backend.babysmile.service;
+package com.backend.babysmile.service.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -34,6 +34,8 @@ public class JwtService {
         return extractClaims(jwt, Claims::getExpiration);
     }
 
+
+    //generate new token based on userdetails
     public String generateToken(UserDetails userDetails){
         return generateToken(new HashMap<>(), userDetails);
     }
@@ -48,6 +50,7 @@ public class JwtService {
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
+                //20hours
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 20))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();

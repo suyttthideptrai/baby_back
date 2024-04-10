@@ -1,6 +1,6 @@
 package com.backend.babysmile.dto.request;
 
-import com.backend.babysmile.model.Role;
+import com.backend.babysmile.model.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

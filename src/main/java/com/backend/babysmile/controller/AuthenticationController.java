@@ -5,14 +5,14 @@ import com.backend.babysmile.dto.request.LoginRequest;
 import com.backend.babysmile.dto.request.RegisterRequest;
 import com.backend.babysmile.dto.respond.AuthenticationResponse;
 import com.backend.babysmile.dto.respond.MessageRespond;
-import com.backend.babysmile.model.Role;
-import com.backend.babysmile.service.AuthenticationService;
+import com.backend.babysmile.model.enums.Role;
+import com.backend.babysmile.service.auth.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RequestMapping("api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
@@ -32,7 +32,7 @@ public class AuthenticationController {
 
     @GetMapping("/hello")
     public ResponseEntity<MessageRespond> message(){
-        return ResponseEntity.ok(new MessageRespond("Hello World"));
+        return ResponseEntity.ok(new MessageRespond(false, "Hello World"));
     }
 
     @PostMapping("/testregister")
@@ -42,7 +42,7 @@ public class AuthenticationController {
         String password = request.getPassword();
         String phone_number = request.getPhone_number();
         Role role = request.getRole();
-        return ResponseEntity.ok(new MessageRespond(username + " " + password + " " + phone_number + " " + role.toString()));
+        return ResponseEntity.ok(new MessageRespond(false, username + " " + password + " " + phone_number + " " + role.toString()));
     }
 //    @PostMapping("/refresh-token")
 //    public void refreshToken(

@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,9 +54,7 @@ public class MaterialService {
     }
 
     public ResponseEntity<MessageRespond> addMaterial(AddMaterialRequest request){
-        //Check for existing material ID
-        if(materialRepository.findByMaterialId(request.material_id()).isEmpty()){
-            //Check for existing relationship
+        try{
             Vendor vendor = new Vendor(request.material_vendor_id());
             MaterialType materialType = new MaterialType(request.material_type_id());
             if(vendorMaterialTypeRepository
@@ -66,10 +65,10 @@ public class MaterialService {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new MessageRespond(false
                             , "Successfully added Material: " + request.material_name() + " for Vendor ID: " + request.material_vendor_id()));
-        }else{
+        }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new MessageRespond(true
-                            , "Cannot add new material, material with ID " + request.material_id() + " already exists!"));
+                            , "Cannot add new material, material with Name " + request.material_name() + ", please try again!"));
         }
     }
 

@@ -16,7 +16,7 @@ import java.util.Set;
 @Table(name = "vendors")
 public class Vendor {
     @Id
-    @Column(name = "vendor_id", nullable = false, columnDefinition="CHAR(10)", length = 10, unique = true)
+    @Column(name = "vendor_id", nullable = false, columnDefinition="CHAR(15)", length = 15, unique = true)
     private String vendorId;
 
     @Column(name = "vendor_name", nullable = false, length = 50)

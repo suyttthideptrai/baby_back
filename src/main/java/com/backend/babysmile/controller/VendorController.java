@@ -40,7 +40,7 @@ public class VendorController {
     public List<VendorListData> findVendorsById(@PathVariable("vendor_id") String id){
         return service.findById(id);
     }
-    @PostMapping("/remove/bulk")
+    @PostMapping("/delete/bulk")
     public ResponseEntity<MessageRespond> removeVendors(@RequestBody String[] vendorIds){return service.removeVendors(vendorIds);}
     @GetMapping("/material/{vendor_id}")
     public List<MaterialData> findMaterialsById(@PathVariable("vendor_id") String id){return service.findMaterialsByVendorId(id);}

@@ -6,6 +6,8 @@ import com.backend.babysmile.dto.respond.material.TypeData;
 import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.MaterialType;
 import com.backend.babysmile.model.entities.Vendor;
+
+import java.time.Instant;
 //import com.backend.babysmile.model.entities.VendorMaterial;
 
 public class MaterialMapper {
@@ -27,8 +29,10 @@ public class MaterialMapper {
 //    }
 
     public static Material mapAddRequestToMaterial(AddMaterialRequest request) {
+        String generatedId = buildMaterialID(request.material_name());
+        System.out.println(generatedId);
         return Material.builder()
-                .materialId(request.material_id())
+                .materialId(generatedId)
                 .materialName(request.material_name())
                 .materialPrice((request.material_price()))
                 .materialQuantity(-1)
@@ -41,6 +45,22 @@ public class MaterialMapper {
                         new Vendor(request.material_vendor_id())
                 )
                 .build();
+    }
+
+    public static String buildMaterialID(String materialName){
+        if (materialName.isEmpty()) {
+            throw new IllegalArgumentException("Material name cannot be empty");
+        }
+        materialName = materialName.trim();
+        String[] words = materialName.split("\\s+");
+        String id;
+        if (words.length == 1) {
+            id =  words[0].substring(0, Math.min(words[0].length(), 2)).toUpperCase();
+        }else{
+            id = (words[0].substring(0, Math.min(words[0].length(), 1)).toUpperCase()+ words[1].substring(0, Math.min(words[1].length(), 1)).toUpperCase());
+        }
+        long timestamp = Instant.now().getEpochSecond();
+        return id + timestamp;
     }
 
     public static TypeData toTypesList(MaterialType materialType){

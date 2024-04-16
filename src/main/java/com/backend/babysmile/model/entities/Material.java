@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name = "materials")
 public class Material {
     @Id
-    @Column(nullable = false, columnDefinition = "CHAR(10)" , length = 10, unique = true)
+    @Column(nullable = false, columnDefinition = "CHAR(15)" , length = 15, unique = true)
     private String materialId;
     @Column(nullable = false, columnDefinition =  "CHAR(50)",length = 50)
     private String materialName;

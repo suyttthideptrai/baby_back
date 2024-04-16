@@ -8,9 +8,6 @@ import com.backend.babysmile.dto.respond.material.MaterialData;
 import com.backend.babysmile.dto.respond.vendor.VendorListData;
 import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.Vendor;
-//import com.backend.babysmile.model.entities.VendorMaterial;
-//import com.backend.babysmile.repository.vendor.VendorMaterialRepository;
-import com.backend.babysmile.model.entities.VendorMaterialType;
 import com.backend.babysmile.repository.vendor.VendorRepository;
 import com.backend.babysmile.service.material.MaterialMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +25,20 @@ public class VendorService {
     @Autowired
     private VendorRepository repository;
 
-//    @Autowired
-//    private VendorMaterialType typeRepository;
-
     public ResponseEntity<MessageRespond> saveVendor(AddVendorRequest request){
-        System.out.println(request);
-        Vendor vendor = toVendor(request);
-        System.out.println(vendor);
-        repository.save(vendor);
-        return ResponseEntity.status(200)
-                .body(new
-                        MessageRespond(false, "Successfully added vendor: " + request.vendor_name())
-                );
+        try {
+            Vendor vendor = toVendor(request);
+            repository.save(vendor);
+            return ResponseEntity.status(200)
+                    .body(new
+                            MessageRespond(false, "Successfully added vendor: " + request.vendor_name())
+                    );
+        }catch (Exception e){
+            return ResponseEntity.status(200)
+                    .body(new
+                            MessageRespond(true, "Failed to add vendor: " + request.vendor_name() + " Please try again!")
+                    );
+        }
     }
 
     public List<VendorListData> allVendors() {
@@ -47,10 +46,6 @@ public class VendorService {
                 .stream()
                 .map(VendorMapper::toVendorListData)
                 .collect(Collectors.toList());
-    }
-
-    public List<Vendor> testVendor() {
-        return  repository.findAll();
     }
 
     public List<VendorListData> findByName(String name) {

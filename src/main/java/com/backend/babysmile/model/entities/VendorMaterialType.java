@@ -19,7 +19,7 @@ public class VendorMaterialType {
     Long id;
 
     @ManyToOne
-    @JoinColumn(name = "vendor_id", nullable = false)
+    @JoinColumn(name = "vendor_id", columnDefinition = "CHAR(15)", nullable = false)
     @JsonManagedReference
     Vendor vendor;
 

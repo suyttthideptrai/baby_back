@@ -22,6 +22,7 @@ public class User implements UserDetails {
     @Column(nullable = false, columnDefinition = "INTEGER(10)", unique = true)
     private Long user_id;
     @Column(nullable = false)
+
     private String username;
     @Column(nullable = false)
     private String password;
@@ -33,6 +34,7 @@ public class User implements UserDetails {
     private String user_address;
     @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private String user_email;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
@@ -40,6 +42,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     List<Order> orders;
 
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
     @Override
     public String toString() {
         return "User{" +

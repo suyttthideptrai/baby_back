@@ -32,6 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
+        System.out.println(request);
         if (request.getServletPath().contains("/api/v1/auth")) {
             filterChain.doFilter(request, response);
             return;
@@ -39,15 +40,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             final String authTokenHeader = request.getHeader("Authorization");
             final String jwt; // json web token
             final String username;
-//        if (requestURI.equals("/api/v1/auth/hello")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
         if(authTokenHeader == null){
             filterChain.doFilter(request, response);
             return;
         }
-        if (!authTokenHeader.startsWith("Bearer ")){
+        if (!authTokenHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }

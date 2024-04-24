@@ -8,6 +8,7 @@ import com.backend.babysmile.model.entities.MaterialType;
 import com.backend.babysmile.model.entities.Vendor;
 
 import java.time.Instant;
+import java.util.Date;
 //import com.backend.babysmile.model.entities.VendorMaterial;
 
 public class MaterialMapper {
@@ -37,7 +38,7 @@ public class MaterialMapper {
                 .materialPrice((request.material_price()))
                 .materialQuantity(-1)
                 .materialUnitOfMeasure(request.material_unit_of_measure())
-                .materialWarehouseDate(request.material_warehouse_date())
+                .materialWarehouseDate(new Date())
                 .materialType(
                         new MaterialType(request.material_type_id())
                 )

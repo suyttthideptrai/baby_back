@@ -1,5 +1,6 @@
 package com.backend.babysmile.config;
 
+import com.backend.babysmile.model.enums.Permission;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static com.backend.babysmile.model.enums.Role.ADM;
+import static com.backend.babysmile.model.enums.Role.PUD;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -34,8 +38,18 @@ public class SecurityConfiguration {
                 )
                 .authorizeHttpRequests(request -> request
                         .requestMatchers( "/api/v1/auth/**").permitAll()
+//                        .requestMatchers("/api/crud/material/**").hasAnyRole(ADM.name(), PUD.name())
                         .requestMatchers("/api/crud/material/**").permitAll()
+                                /* hasAnyAuthority(
+                                        ADM.getPermissions().stream().map(Permission::getPermission).toArray(String[]::new)
+//                                PUD.getPermissions().stream().map(Permission::getPermission).toArray(String[]::new)
+                        )
+                                 */
                         .requestMatchers("/api/crud/vendor/**").permitAll()
+                        /* hasAnyAuthority(
+                                        ADM.getPermissions().stream().map(Permission::getPermission).toArray(String[]::new)
+                        )
+                         */
                         .anyRequest()
                         .authenticated()
                 )

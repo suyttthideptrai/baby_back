@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 21, 2024 at 02:45 PM
+-- Generation Time: Apr 24, 2024 at 01:05 AM
 -- Server version: 5.5.65-MariaDB
 -- PHP Version: 8.3.3
 
@@ -28,25 +28,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `materials` (
-  `material_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `material_name` char(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `material_price` int(11) NOT NULL,
   `material_quantity` int(11) NOT NULL,
-  `material_unit_of_measure` char(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `material_warehouse_date` date NOT NULL,
   `type_id` int(11) DEFAULT NULL,
-  `material_vendor_id` char(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `material_price` int(11) NOT NULL,
+  `material_warehouse_date` date NOT NULL,
+  `material_unit_of_measure` char(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `material_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `material_vendor_id` char(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `material_name` char(50) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `materials`
 --
 
-INSERT INTO `materials` (`material_id`, `material_name`, `material_price`, `material_quantity`, `material_unit_of_measure`, `material_warehouse_date`, `type_id`, `material_vendor_id`) VALUES
-('GH1713701529', 'Gia Huy', 0, -1, '1', '2024-04-21', 1, 'AC1713700543'),
-('GH1713701568', 'Gia Huy', 0, -1, '1', '2024-04-21', 1, 'AC1713700543'),
-('SM1713700714', 'Sample Mat 2', 520000, -1, 'pieces', '2024-04-21', 1, 'AC1713700543'),
-('SM1713701507', 'Sample Mat 2', 520000, -1, 'pieces', '2024-04-22', 1, 'AC1713700543');
+INSERT INTO `materials` (`material_quantity`, `type_id`, `material_price`, `material_warehouse_date`, `material_unit_of_measure`, `material_id`, `material_vendor_id`, `material_name`) VALUES
+(-1, 3, 1200000, '2024-04-24', 'pair', '1B1713920601', 'YF1713920535', '1Pair Bicycle Brake Handle');
 
 -- --------------------------------------------------------
 
@@ -64,9 +61,9 @@ CREATE TABLE `material_types` (
 --
 
 INSERT INTO `material_types` (`type_id`, `type_name`) VALUES
-(1, 'Bycicle Components'),
-(2, 'Office Supplies'),
-(3, 'Raw Material');
+(1, 'Văn phòng phẩm'),
+(2, 'Nguyên vật liệu'),
+(3, 'Bộ phận xe');
 
 -- --------------------------------------------------------
 
@@ -75,18 +72,18 @@ INSERT INTO `material_types` (`type_id`, `type_name`) VALUES
 --
 
 CREATE TABLE `orders` (
-  `order_id` bigint(20) NOT NULL,
-  `order_delivery_date` datetime(6) NOT NULL,
-  `order_issued_date` datetime(6) NOT NULL,
-  `order_note` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order_status` enum('PENDING','APPROVED','DELIVERING','COMPLETED','REJECTED','SUSPENDING','DELETED') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `order_title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `order_total_price` bigint(20) NOT NULL,
   `order_quantity` int(11) NOT NULL,
+  `order_delivery_date` datetime(6) NOT NULL,
+  `order_id` bigint(20) NOT NULL,
+  `order_issued_date` datetime(6) NOT NULL,
+  `order_total_price` bigint(20) NOT NULL,
+  `order_user_id` int(10) NOT NULL,
   `order_material_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `order_receipt_id` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `order_user_id` int(10) NOT NULL,
-  `order_vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL
+  `order_vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `order_title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `order_note` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `order_status` enum('PENDING','APPROVED','DELIVERING','COMPLETED','REJECTED','SUSPENDING','DELETED') COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -96,9 +93,9 @@ CREATE TABLE `orders` (
 --
 
 CREATE TABLE `receipts` (
-  `receipt_id` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
-  `receipt_order_id` bigint(20) NOT NULL
+  `receipt_order_id` bigint(20) NOT NULL,
+  `receipt_id` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -108,23 +105,30 @@ CREATE TABLE `receipts` (
 --
 
 CREATE TABLE `token` (
-  `id` int(11) NOT NULL,
   `expired` bit(1) NOT NULL,
+  `id` int(11) NOT NULL,
   `revoked` bit(1) NOT NULL,
+  `user_id` int(10) DEFAULT NULL,
   `token` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `token_type` enum('BEARER') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_id` int(10) DEFAULT NULL
+  `token_type` enum('BEARER') COLLATE utf8mb4_unicode_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `token`
 --
 
-INSERT INTO `token` (`id`, `expired`, `revoked`, `token`, `token_type`, `user_id`) VALUES
-(1, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWJ5c21pbGVfYWRtaW4iLCJpYXQiOjE3MTM2OTM5MjAsImV4cCI6MTcxMzc4MDMyMH0.rro7dsXmLoH-1FyKbAJ_JT1B-IIwt_z_SGI3RpOt37k', 'BEARER', 1),
-(2, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWJ5c21pbGVfYWRtaW4iLCJpYXQiOjE3MTM2OTQ3NTcsImV4cCI6MTcxMzc4MTE1N30.U6F2FuncrykiMbH5t5JpMZhVS5iW_nF8FTOjymQlChY', 'BEARER', 1),
-(52, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzY5NDg5OSwiZXhwIjoxNzEzNzgxMjk5fQ.LaoI0D0zlvYmezTCihm5K1BOJ-Vsb4K3e-Kqo3KybHM', 'BEARER', 1),
-(53, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzcwMDUzMCwiZXhwIjoxNzEzNzg2OTMwfQ.LnVOhDRN8PGhOktRLOQrvjvBEJCwgMNYWViZqxEpvdI', 'BEARER', 1);
+INSERT INTO `token` (`expired`, `id`, `revoked`, `user_id`, `token`, `token_type`) VALUES
+(b'0', 1, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg4NTc1MCwiZXhwIjoxNzEzOTcyMTUwfQ.cEeWqigYVWuaikNVqBmrW1N39tGrce1ksuZjG3m2yDo', 'BEARER'),
+(b'0', 2, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg4NTc1OCwiZXhwIjoxNzEzOTcyMTU4fQ.i6OD_vsGbr3JYn0QHSoRAN9dphqaHp1VcHQHRQv-co4', 'BEARER'),
+(b'0', 3, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg4NTk2NSwiZXhwIjoxNzEzOTcyMzY1fQ.yK03O2U1n6jc8-jHLGLBR1k-1hfbmucSn-60HckkNbU', 'BEARER'),
+(b'0', 4, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg4NjAyMywiZXhwIjoxNzEzOTcyNDIzfQ.uJC2uxQ4dvrhpsp-IAca86t1vLg6WpS9l8GqgSgx6GE', 'BEARER'),
+(b'0', 5, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg5MDQ5OCwiZXhwIjoxNzEzOTc2ODk4fQ.knB9_eal4PpYGcOOhTgkuL1minekV7CodIF7yaSGYgo', 'BEARER'),
+(b'0', 6, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg5MDc2NSwiZXhwIjoxNzEzOTc3MTY1fQ.QffnFxJLfsdYOxWBLmeyMU-oW3YwpoRcwgWV_AqzmJo', 'BEARER'),
+(b'0', 7, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg5MTA2MCwiZXhwIjoxNzEzOTc3NDYwfQ.yI_It5ePDciBzwvvp6avJ4VeevU2XdtUN-2nvOysnX8', 'BEARER'),
+(b'0', 8, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg5MTk3NCwiZXhwIjoxNzEzOTc4Mzc0fQ.Yqp4xQGPbukiPii95TMTxjBtq58O4oOJeLyZVMzDexY', 'BEARER'),
+(b'0', 9, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzg5Mzg2MiwiZXhwIjoxNzEzOTgwMjYyfQ.BGfVBp5MYOxoT9w6Q7j14SV52ene317uOJP7VRCJ5Vk', 'BEARER'),
+(b'0', 52, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzkxOTM0OSwiZXhwIjoxNzE0MDA1NzQ5fQ.xF_er4bQ8donZvUdXHwkfHKbMBcc8wpoH2d4oJzLmsY', 'BEARER'),
+(b'0', 53, b'0', 1, 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxMzkyMDA3NCwiZXhwIjoxNzE0MDA2NDc0fQ.Y4gv4iOU0DbxoegexGDkW-zxYpGVm-ODxapgv0JPlus', 'BEARER');
 
 -- --------------------------------------------------------
 
@@ -153,19 +157,19 @@ CREATE TABLE `users` (
   `user_id` int(10) NOT NULL,
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `phone_number` char(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('ADM','NON_STAFF','PRD','IND','PUD') COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_address` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_real_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+  `username` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `role` enum('ADM','NON_STAFF','PRD','IND','PUD') COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `password`, `phone_number`, `role`, `user_address`, `user_email`, `user_real_name`, `username`) VALUES
-(1, '$2a$10$xUJwY7SUCIp1gMko2EYklOx85TqBr5DH5xgtSy2oy9kOb61G92gEG', '0999999999', 'ADM', 'babysmile_admin', 'babysmile_admin', 'babysmile_admin', 'babysmile_admin');
+INSERT INTO `users` (`user_id`, `password`, `phone_number`, `user_address`, `user_email`, `user_real_name`, `username`, `role`) VALUES
+(1, '$2a$10$fNK5LXGaj0BvHCB568vpuukeKdyUUkyUkR1RpDXhIru/ijyr9ub2u', '0999999999', 'babysmile_admin', 'babysmile_admin', 'babysmile_admin', 'babysmile_admin', 'ADM');
 
 -- --------------------------------------------------------
 
@@ -191,22 +195,22 @@ INSERT INTO `users_seq` (`next_val`) VALUES
 --
 
 CREATE TABLE `vendors` (
+  `vendor_order_budget` int(11) NOT NULL DEFAULT '0',
   `vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `vendor_tax_code` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `vendor_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `vendor_address` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `vendor_email` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vendor_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vendor_order_budget` int(11) NOT NULL DEFAULT '0',
   `vendor_phone` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vendor_status` enum('ACTIVE','INACTIVE','INORDER') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vendor_tax_code` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `vendor_status` enum('ACTIVE','INACTIVE','INORDER') COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `vendors`
 --
 
-INSERT INTO `vendors` (`vendor_id`, `vendor_address`, `vendor_email`, `vendor_name`, `vendor_order_budget`, `vendor_phone`, `vendor_status`, `vendor_tax_code`) VALUES
-('AC1713700543', 'sample addreess', 'sample@email.com', 'ABC comp', 0, '99910232', 'INACTIVE', 'asdasdasd312');
+INSERT INTO `vendors` (`vendor_order_budget`, `vendor_id`, `vendor_tax_code`, `vendor_name`, `vendor_address`, `vendor_email`, `vendor_phone`, `vendor_status`) VALUES
+(0, 'YF1713920535', '12345678abc', 'YZ FACTORY', 'km 9 Nguyen Trai', 'nguyen@gmail.com', '0999102312', 'ACTIVE');
 
 -- --------------------------------------------------------
 
@@ -215,8 +219,8 @@ INSERT INTO `vendors` (`vendor_id`, `vendor_address`, `vendor_email`, `vendor_na
 --
 
 CREATE TABLE `vendor_supplied_types` (
-  `id` bigint(20) NOT NULL,
   `material_type_id` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL,
   `vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -224,8 +228,8 @@ CREATE TABLE `vendor_supplied_types` (
 -- Dumping data for table `vendor_supplied_types`
 --
 
-INSERT INTO `vendor_supplied_types` (`id`, `material_type_id`, `vendor_id`) VALUES
-(1, 1, 'AC1713700543');
+INSERT INTO `vendor_supplied_types` (`material_type_id`, `id`, `vendor_id`) VALUES
+(3, 4, 'YF1713920535');
 
 --
 -- Indexes for dumped tables
@@ -310,7 +314,7 @@ ALTER TABLE `orders`
 -- AUTO_INCREMENT for table `vendor_supplied_types`
 --
 ALTER TABLE `vendor_supplied_types`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -320,8 +324,8 @@ ALTER TABLE `vendor_supplied_types`
 -- Constraints for table `materials`
 --
 ALTER TABLE `materials`
-  ADD CONSTRAINT `FKpbdexnvwm9c46tq56yhvcggxu` FOREIGN KEY (`material_vendor_id`) REFERENCES `vendors` (`vendor_id`),
-  ADD CONSTRAINT `FK5093fls8u6emq9666xtacdj0q` FOREIGN KEY (`type_id`) REFERENCES `material_types` (`type_id`);
+  ADD CONSTRAINT `FK5093fls8u6emq9666xtacdj0q` FOREIGN KEY (`type_id`) REFERENCES `material_types` (`type_id`),
+  ADD CONSTRAINT `FKpbdexnvwm9c46tq56yhvcggxu` FOREIGN KEY (`material_vendor_id`) REFERENCES `vendors` (`vendor_id`);
 
 --
 -- Constraints for table `orders`
@@ -348,8 +352,8 @@ ALTER TABLE `token`
 -- Constraints for table `vendor_supplied_types`
 --
 ALTER TABLE `vendor_supplied_types`
-  ADD CONSTRAINT `FKs6b9t88f42x2jt9yb7brrjxwc` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`vendor_id`),
-  ADD CONSTRAINT `FK9wxdqi2c4iqx3wookvb42x8uh` FOREIGN KEY (`material_type_id`) REFERENCES `material_types` (`type_id`);
+  ADD CONSTRAINT `FK9wxdqi2c4iqx3wookvb42x8uh` FOREIGN KEY (`material_type_id`) REFERENCES `material_types` (`type_id`),
+  ADD CONSTRAINT `FKs6b9t88f42x2jt9yb7brrjxwc` FOREIGN KEY (`vendor_id`) REFERENCES `vendors` (`vendor_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

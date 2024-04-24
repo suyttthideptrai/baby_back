@@ -46,7 +46,7 @@ public class Vendor {
     @JsonBackReference
     List<Material> materials;
 
-    @OneToMany(mappedBy = "vendor")
+    @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
     List<VendorMaterialType> vendorMaterialTypes;
 
     @OneToMany(mappedBy = "vendor")

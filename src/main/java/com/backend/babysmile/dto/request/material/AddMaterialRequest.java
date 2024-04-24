@@ -18,9 +18,9 @@ public record AddMaterialRequest(
         @NotBlank(message = "Unit of measure is required and cannot be empty.")
         String material_unit_of_measure,
 
-        @NotNull(message = "Warehouse date is required.")
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        Date material_warehouse_date,
+//        @NotNull(message = "Warehouse date is required.")
+//        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+//        Date material_warehouse_date,
 
         @NotNull(message = "Material type ID is required.")
         @Positive(message = "Material type ID must be a positive integer.")

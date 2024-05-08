@@ -27,4 +27,6 @@ public class VendorMaterialType {
     @JoinColumn(name = "material_type_id", nullable = false)
 //    @JsonManagedReference
     MaterialType materialType;
+
+
 }

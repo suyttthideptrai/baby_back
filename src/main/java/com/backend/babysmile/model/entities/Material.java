@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 import java.util.List;
@@ -20,9 +21,11 @@ import java.util.List;
 @Table(name = "materials")
 public class Material {
     @Id
-    @Column(nullable = false, columnDefinition = "CHAR(15)" , length = 15, unique = true)
+    @GeneratedValue(generator = "material-id-generator")
+    @GenericGenerator(name = "material-id-generator", type = com.backend.babysmile.service.material.MaterialIdGenerator.class)
+    @Column(nullable = false, columnDefinition = "CHAR(15)", length = 15, unique = true)
     private String materialId;
-    @Column(nullable = false, columnDefinition =  "CHAR(50)",length = 50)
+    @Column(nullable = false, columnDefinition = "CHAR(50)", length = 50)
     private String materialName;
     @Column(nullable = false, columnDefinition = "INTEGER(11)")
     private Long materialPrice;
@@ -46,12 +49,13 @@ public class Material {
     @JsonManagedReference
     Vendor vendor;
 
-//    @OneToMany(mappedBy = "material")
-//    @JsonBackReference
-//    List<VendorMaterial> vendorMaterials;
+    @OneToMany(mappedBy = "material")
+    @JsonBackReference
+    List<OrderMaterial> orderMaterials;
 
     @OneToMany(mappedBy = "material")
-    List<Order> orders;
+    List<MaterialExport> materialExports;
+
     public Material(String id) {
         this.materialId = id;
     }

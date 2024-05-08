@@ -1,11 +1,10 @@
 package com.backend.babysmile.controller;
 
-import com.backend.babysmile.dto.request.material.AddMaterialRequest;
-import com.backend.babysmile.dto.request.material.BulkDeleteRequest;
-import com.backend.babysmile.dto.request.material.MaterialUpdateRequest;
-import com.backend.babysmile.dto.request.material.NewMaterialType;
+import com.backend.babysmile.dto.request.material.*;
 import com.backend.babysmile.dto.respond.MessageRespond;
 import com.backend.babysmile.dto.respond.material.MaterialData;
+import com.backend.babysmile.dto.respond.material.MaterialExportData;
+import com.backend.babysmile.dto.respond.material.MaterialSuggestData;
 import com.backend.babysmile.dto.respond.material.TypeData;
 import com.backend.babysmile.dto.respond.vendor.VendorListData;
 import com.backend.babysmile.model.entities.Material;
@@ -64,23 +63,16 @@ public class MaterialController {
     }
 
     @GetMapping("/query/name/{material_name}")
-    public List<MaterialData> findMaterialByName(
+    public List<MaterialSuggestData> findMaterialByName(
             @PathVariable("material_name") String id
     ){
         return materialService.findAllByMaterialNameLike(id);
-    }
+}
 
     @PutMapping("/update")
     public ResponseEntity<MessageRespond> updateMaterial(@RequestBody MaterialUpdateRequest material) {
         return materialService.updateMaterial(material);
     }
-
-//    @DeleteMapping("/delete/{material_id}")
-//    public ResponseEntity<MessageRespond> delete(
-//            @PathVariable("material_id") String id
-//    ){
-//        return materialService.deleteById(id);
-//    }
 
     @PostMapping("/delete/bulk")
     public ResponseEntity<MessageRespond> bulkDelete(
@@ -108,4 +100,19 @@ public class MaterialController {
     /*
      * VENDOR_MATERIALS
      */
+
+
+    /*
+     * EXPORT MATERIAL
+     */
+
+    @GetMapping("/export/all")
+    public List<MaterialExportData> getAllMaterialExportData() {
+        return materialService.getMaterialExports();
+    }
+
+    @PostMapping("/export")
+    public ResponseEntity<MessageRespond> exportMaterial(@RequestBody ExportMaterialRequest request) {
+        return materialService.exportMaterials(request);
+    }
 }

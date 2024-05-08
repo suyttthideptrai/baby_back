@@ -1,13 +1,14 @@
 package com.backend.babysmile.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -16,14 +17,29 @@ import java.util.Date;
 @Entity
 @Table(name = "receipts")
 public class Receipt {
+
     @Id
-    @Column(nullable = false, columnDefinition = "VARCHAR(15)" ,length = 15, unique = true)
+    @GeneratedValue(generator = "receipt_id_generator")
+    @GenericGenerator(name = "receipt_id_generator", type = com.backend.babysmile.service.receipt.ReceiptIDGenerator.class)
+    @Column(nullable = false, columnDefinition = "CHAR(8)")
     String receiptId;
+
     @Column(nullable = false, columnDefinition = "DATETIME")
     Date createdAt;
+
     @ManyToOne
     @JoinColumn(
-            nullable = false, name = "receipt_order_id"
+            nullable = false, name = "receipt_creator_id", columnDefinition = "INTEGER(10)"
+    )
+    User creator;
+
+    @ManyToOne
+    @JoinColumn(
+            nullable = false, name = "receipt_order_id", columnDefinition = "CHAR(8)"
     )
     Order order;
+
+    @OneToMany(mappedBy = "receipt")
+//    @Column(nullable = false, name = "receipt_item")
+    List<ReceiptItem> receiptItems;
 }

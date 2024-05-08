@@ -4,10 +4,12 @@ package com.backend.babysmile.service.vendor;
 import com.backend.babysmile.dto.request.vendor.AddVendorRequest;
 import com.backend.babysmile.dto.request.vendor.UpdateVendorRequest;
 import com.backend.babysmile.dto.respond.MessageRespond;
-import com.backend.babysmile.dto.respond.material.MaterialData;
+import com.backend.babysmile.dto.respond.material.MaterialSuggestData;
 import com.backend.babysmile.dto.respond.vendor.VendorListData;
+import com.backend.babysmile.dto.respond.vendor.VendorQuerySuggestData;
 import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.vendor.VendorRepository;
 import com.backend.babysmile.service.material.MaterialMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,8 @@ import static com.backend.babysmile.service.vendor.VendorMapper.toVendor;
 public class VendorService {
     @Autowired
     private VendorRepository repository;
+    @Autowired
+    private MaterialRepository materialRepository;
 
     public ResponseEntity<MessageRespond> saveVendor(AddVendorRequest request){
         try {
@@ -92,7 +96,7 @@ public class VendorService {
                 .body(new MessageRespond(false, "Done deleting these items " + Arrays.toString(vendorId)));
     }
 
-    public List<MaterialData> findMaterialsByVendorId(String vendorId){
+    public List<MaterialSuggestData> findMaterialsByVendorId(String vendorId){
         Optional<Vendor> vendor = repository.findById(vendorId);
         List<Material> materials;
         if(vendor.isPresent()){
@@ -101,7 +105,28 @@ public class VendorService {
             return null;
         }
         return materials
-                .stream().map(MaterialMapper::toMaterialData)
+                .stream().map(MaterialMapper::toMaterialVendorSuggestData)
+                .collect(Collectors.toList());
+    }
+
+    public List<VendorQuerySuggestData> querySuggestName(String vendorName){
+        List<Vendor> vendors = repository.findByVendorName(vendorName);
+        return vendors.stream()
+                .map(VendorMapper::toVendorQuerySuggestData)
+                .collect(Collectors.toList());
+    }
+
+    public List<VendorQuerySuggestData> querySuggestID(String vendorId){
+        List<Vendor> vendors = repository.findByIdLike(vendorId);
+        return vendors.stream()
+                .map(VendorMapper::toVendorQuerySuggestData)
+                .collect(Collectors.toList());
+    }
+
+    public List<MaterialSuggestData> suggestVendorMaterials(String vendorId, String materialName) {
+        return materialRepository.findByVendorIdAndMaterialNameLike(vendorId, materialName)
+                .stream()
+                .map(MaterialMapper::toMaterialVendorSuggestData)
                 .collect(Collectors.toList());
     }
 }

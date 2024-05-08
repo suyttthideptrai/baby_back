@@ -1,6 +1,8 @@
 package com.backend.babysmile.model.entities;
 
 import com.backend.babysmile.model.enums.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,10 +42,20 @@ public class User implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     List<Order> orders;
 
+    @OneToMany(mappedBy =  "creator")
+    List<Receipt> receipts;
+
     @OneToMany(mappedBy = "user")
+    @JsonBackReference
     private List<Token> tokens;
+
+    public User(long userId) {
+        this.user_id = userId;
+    }
+
     @Override
     public String toString() {
         return "User{" +

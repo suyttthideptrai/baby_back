@@ -2,8 +2,10 @@ package com.backend.babysmile.model.entities;
 
 import com.backend.babysmile.model.enums.VendorStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 import java.util.Set;
@@ -16,6 +18,8 @@ import java.util.Set;
 @Table(name = "vendors")
 public class Vendor {
     @Id
+    @GeneratedValue(generator = "vendor-id-generator")
+    @GenericGenerator(name = "vendor-id-generator", type=com.backend.babysmile.service.vendor.VendorIdGenerator.class )
     @Column(name = "vendor_id", nullable = false, columnDefinition="CHAR(15)", length = 15, unique = true)
     private String vendorId;
 
@@ -47,6 +51,7 @@ public class Vendor {
     List<Material> materials;
 
     @OneToMany(mappedBy = "vendor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     List<VendorMaterialType> vendorMaterialTypes;
 
     @OneToMany(mappedBy = "vendor")

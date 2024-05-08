@@ -1,20 +1,19 @@
 package com.backend.babysmile.service.material;
 
 import com.backend.babysmile.dto.request.material.AddMaterialRequest;
+import com.backend.babysmile.dto.request.material.ExportMaterialRequest;
 import com.backend.babysmile.dto.request.material.MaterialUpdateRequest;
 import com.backend.babysmile.dto.respond.MessageRespond;
 import com.backend.babysmile.dto.respond.material.MaterialData;
-import com.backend.babysmile.dto.respond.vendor.VendorListData;
-import com.backend.babysmile.model.entities.Material;
-import com.backend.babysmile.model.entities.MaterialType;
-import com.backend.babysmile.model.entities.Vendor;
-import com.backend.babysmile.model.entities.VendorMaterialType;
+import com.backend.babysmile.dto.respond.material.MaterialExportData;
+import com.backend.babysmile.dto.respond.material.MaterialSuggestData;
+import com.backend.babysmile.model.entities.*;
+import com.backend.babysmile.repository.material.MaterialExportRepository;
 import com.backend.babysmile.repository.material.MaterialRepository;
-//import com.backend.babysmile.repository.vendor.VendorMaterialRepository;
-//import com.backend.babysmile.service.vendor.VendorMapper;
-import com.backend.babysmile.repository.material.MaterialTypeRepository;
 import com.backend.babysmile.repository.vendor.VendorTypeRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.backend.babysmile.service.material.MaterialMapper.*;
+import static com.backend.babysmile.utils.LocalTime.getCurrentDate;
 
 @Service
 public class MaterialService {
@@ -33,7 +33,10 @@ public class MaterialService {
     @Autowired
     private VendorTypeRepository vendorMaterialTypeRepository;
 
-//    @Autowired
+    @Autowired
+    private MaterialExportRepository materialExportRepository;
+
+    //    @Autowired
 //    private VendorMaterialRepository vendorMaterialRepository;
     public ResponseEntity<MessageRespond> updateMaterial(MaterialUpdateRequest updatedMaterial) {
         Material existingMaterial = materialRepository.findById(updatedMaterial.material_id()).orElse(null);
@@ -53,19 +56,19 @@ public class MaterialService {
                 .body(new MessageRespond(false, "Material updated successfully"));
     }
 
-    public ResponseEntity<MessageRespond> addMaterial(AddMaterialRequest request){
-        try{
+    public ResponseEntity<MessageRespond> addMaterial(AddMaterialRequest request) {
+        try {
             Vendor vendor = new Vendor(request.material_vendor_id());
             MaterialType materialType = new MaterialType(request.material_type_id());
-            if(vendorMaterialTypeRepository
-                    .findExistingVendorMaterialType(vendor, materialType).isEmpty()){
+            if (vendorMaterialTypeRepository
+                    .findExistingVendorMaterialType(vendor, materialType).isEmpty()) {
                 vendorMaterialTypeRepository.save(VendorMaterialType.builder().materialType(materialType).vendor(vendor).build());
             }
             materialRepository.save(mapAddRequestToMaterial(request));
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new MessageRespond(false
                             , "Successfully added Material: " + request.material_name() + " for Vendor ID: " + request.material_vendor_id()));
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(new MessageRespond(true
                             , "Cannot add new material, material with Name " + request.material_name() + ", please try again!"));
@@ -76,7 +79,7 @@ public class MaterialService {
         try {
             Set<String> Ids = new HashSet<>(List.of(selectedIds));
             materialRepository.deleteAllById(Ids);
-        }catch (Exception e){
+        } catch (Exception e) {
             return ResponseEntity.status(500)
                     .body(new MessageRespond(true, "Delete failed"));
         }
@@ -105,10 +108,10 @@ public class MaterialService {
 //        return  ResponseEntity.status(200).body(new MessageRespond(false, "Delete item success!"));
 //    }
 
-    public List<MaterialData> findAllByMaterialNameLike(String name) {
+    public List<MaterialSuggestData> findAllByMaterialNameLike(String name) {
         return materialRepository.findAllByMaterialNameLike(name)
                 .stream()
-                .map(MaterialMapper::toMaterialData)
+                .map(MaterialMapper::toMaterialVendorSuggestData)
                 .collect(Collectors.toList());
     }
 
@@ -127,6 +130,40 @@ public class MaterialService {
         return materialRepository.findSuggestionById(id)
                 .stream()
                 .map(MaterialMapper::toMaterialData)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ResponseEntity<MessageRespond> exportMaterials(ExportMaterialRequest request) {
+        try {
+            request.material_quantities().forEach((materialId, quantity) -> {
+                Material material = materialRepository.findById(materialId).orElse(null);
+                if (material == null) {
+                    throw new RuntimeException("Material ID: " + materialId + " not found");
+                }
+                if (material.getMaterialQuantity() < quantity) {
+                    throw new RuntimeException("Material export quantity: " + quantity + " exceeds the available quantity: " + material.getMaterialQuantity());
+                }
+                material.setMaterialQuantity(material.getMaterialQuantity() - quantity);
+                materialRepository.save(material);
+                Date currentDateTime = getCurrentDate();
+                materialExportRepository.save(MaterialExport.builder()
+                        .material(material)
+                        .quantity(quantity)
+                        .exportDate(currentDateTime)
+                        .build());
+            });
+            return ResponseEntity.status(200)
+                    .body(new MessageRespond(false, "Exported successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(200)
+                    .body(new MessageRespond(true, "Something went wrong while exporting materials, please try again!"));
+        }
+    }
+
+    public List<MaterialExportData> getMaterialExports() {
+        return materialExportRepository.findAll(Sort.by(Sort.Direction.DESC, "id"))
+                .stream().map(MaterialMapper::toExportData)
                 .collect(Collectors.toList());
     }
 }

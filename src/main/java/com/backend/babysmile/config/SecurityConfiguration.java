@@ -50,6 +50,8 @@ public class SecurityConfiguration {
                                         ADM.getPermissions().stream().map(Permission::getPermission).toArray(String[]::new)
                         )
                          */
+                                .requestMatchers("/api/crud/order/**").permitAll()
+                                .requestMatchers("/api/crud/receipt/**").permitAll()
                         .anyRequest()
                         .authenticated()
                 )

@@ -39,7 +39,7 @@ public class Receipt {
     )
     Order order;
 
-    @OneToMany(mappedBy = "receipt")
+    @OneToMany(mappedBy = "receipt", cascade = CascadeType.REMOVE)
 //    @Column(nullable = false, name = "receipt_item")
     List<ReceiptItem> receiptItems;
 }

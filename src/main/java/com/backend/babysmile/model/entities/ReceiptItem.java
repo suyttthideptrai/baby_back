@@ -20,8 +20,8 @@ public class ReceiptItem {
     @JoinColumn(name = "receipt_id", nullable = false)
     Receipt receipt;
 
-    @OneToOne
-    @JoinColumn(name = "order_material_id", nullable = false, referencedColumnName = "order_material_id")
+   @ManyToOne
+    @JoinColumn(name = "order_material_id", nullable = false)
     OrderMaterial orderMaterial;
 
     @Column(nullable = false, name = "receipt_item_quantity")

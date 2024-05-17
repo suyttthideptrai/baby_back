@@ -2,9 +2,9 @@ package com.backend.babysmile.model.enums;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum Permission {
-
     ADMIN_READ("admin:read"),
     ADMIN_UPDATE("admin:update"),
     ADMIN_CREATE("admin:create"),
@@ -17,8 +17,9 @@ public enum Permission {
     PRD_READ("prd:read"),
     PRD_UPDATE("prd:update"),
     IND_READ("ind:read"),
-    IND_UPDATE("ind:update");
-    @Getter
+    IND_UPDATE("ind:update"),
+    IND_DELETE("ind:delete"),
+     IND_CREATE("ind:create");
     private final String permission;
 }
 

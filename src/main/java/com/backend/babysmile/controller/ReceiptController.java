@@ -28,6 +28,11 @@ public class ReceiptController {
         return receiptService.allReceipts();
     }
 
+    @GetMapping("/details/{id}")
+    public ReceiptData getAllReceipts(@PathVariable  String id) {
+        return receiptService.getReceiptDetails(id);
+    }
+
     @DeleteMapping("/delete")
     public ResponseEntity<MessageRespond> deleteReceipts(@RequestBody String[] receiptIds) {
         return receiptService.removeReceipt(receiptIds);

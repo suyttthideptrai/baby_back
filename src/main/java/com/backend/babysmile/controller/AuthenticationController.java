@@ -30,20 +30,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
-    @GetMapping("/hello")
-    public ResponseEntity<MessageRespond> message(){
-        return ResponseEntity.ok(new MessageRespond(false, "Hello World"));
-    }
-
-    @PostMapping("/testregister")
-    public ResponseEntity<MessageRespond> msg(@RequestBody RegisterRequest request){
-        System.out.println("received");
-        String username = request.getUsername();
-        String password = request.getPassword();
-        String phone_number = request.getPhone_number();
-        Role role = request.getRole();
-        return ResponseEntity.ok(new MessageRespond(false, username + " " + password + " " + phone_number + " " + role.toString()));
-    }
 //    @PostMapping("/refresh-token")
 //    public void refreshToken(
 //            HttpServletRequest request,

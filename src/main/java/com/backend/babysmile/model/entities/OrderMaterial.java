@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.List;
 import java.util.Objects;
 
 
@@ -47,8 +48,8 @@ public class OrderMaterial {
     @Column(name = "order_material_status", nullable = false)
     private OrderMaterialStatus OrderMaterialStatus;
 
-    @OneToOne(mappedBy = "orderMaterial")
-    private ReceiptItem receiptItem;
+    @OneToMany(mappedBy = "orderMaterial")
+    private List<ReceiptItem> receiptItems;
 
     @Override
     public final boolean equals(Object object) {

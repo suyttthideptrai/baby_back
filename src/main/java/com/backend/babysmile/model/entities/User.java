@@ -24,7 +24,6 @@ public class User implements UserDetails {
     @Column(nullable = false, columnDefinition = "INTEGER(10)", unique = true)
     private Long user_id;
     @Column(nullable = false)
-
     private String username;
     @Column(nullable = false)
     private String password;

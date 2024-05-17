@@ -30,7 +30,7 @@ public class OrderMapper {
               Order emptyOrder = new Order();
               emptyOrder.setOrderIssuedDate(new Date());
               emptyOrder.setOrderDeliveryDate(request.order_delivery_date());
-              emptyOrder.setOrderStatus(OrderStatus.PENDING);
+              emptyOrder.setOrderStatus(OrderStatus.UNPROCESSED);
               emptyOrder.setOrderTitle(request.order_title());
               emptyOrder.setUser(new User(request.order_creator_id()));
               emptyOrder.setVendor(new Vendor(request.order_vendor_id()));

@@ -156,6 +156,7 @@ public class MaterialService {
             return ResponseEntity.status(200)
                     .body(new MessageRespond(false, "Exported successfully"));
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(200)
                     .body(new MessageRespond(true, "Something went wrong while exporting materials, please try again!"));
         }

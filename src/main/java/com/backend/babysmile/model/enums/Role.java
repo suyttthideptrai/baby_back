@@ -25,15 +25,17 @@ public enum Role {
                     MANAGER_CREATE
             )
     ),
-    NON_STAFF(Collections.emptySet()),
-    PRD(Set.of(
-                    PRD_READ,
-                    PRD_UPDATE,
-                    PRD_CREATE
-    )), // ben san xuat: create/ update request purchase order
+    //NON_STAFF(Collections.emptySet()),
+//    PRD(Set.of(
+//                    PRD_READ,
+//                    PRD_UPDATE,
+//                    PRD_CREATE
+//    )), // ben san xuat: create/ update request purchase order
     IND(Set.of(
                     IND_READ,
-                    IND_UPDATE
+                    IND_UPDATE,
+                    IND_DELETE,
+                    IND_CREATE
     )), // ben nhan kho. update order
     PUD(
             Set.of(

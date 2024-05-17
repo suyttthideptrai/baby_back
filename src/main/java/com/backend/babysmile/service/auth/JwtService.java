@@ -43,6 +43,7 @@ public class JwtService {
         if (roles != null && !roles.isEmpty()) {
             claims.put("rol", roles.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
         }
+
         return generateToken(claims, userDetails);
     }
 

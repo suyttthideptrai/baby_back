@@ -11,10 +11,12 @@ public class ReceiptMapper {
                 receipt.getReceiptId(),
                 receipt.getCreatedAt(),
                 receipt.getOrder().getOrderIssuedDate(),
+                receipt.getOrder().getOrderDeliveryDate(),
                 receipt.getOrder().getOrderId(),
                 receipt.getOrder().getOrderTitle(),
                 receipt.getCreator().getUser_id(),
                 receipt.getCreator().getUser_real_name(),
+                receipt.getOrder().getVendor().getVendorId(),
                 receipt.getReceiptItems().stream().map(ReceiptMapper::toReceiptItemData).toList()
         );
     }

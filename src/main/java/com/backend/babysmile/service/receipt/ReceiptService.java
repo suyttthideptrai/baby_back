@@ -6,11 +6,13 @@ import com.backend.babysmile.dto.respond.MessageRespond;
 import com.backend.babysmile.dto.respond.receipt.ReceiptData;
 import com.backend.babysmile.model.entities.*;
 import com.backend.babysmile.model.enums.OrderMaterialStatus;
+import com.backend.babysmile.model.enums.OrderStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.order.OrderMaterialRepository;
 import com.backend.babysmile.repository.order.OrderRepository;
 import com.backend.babysmile.repository.receipt.ReceiptItemRepository;
 import com.backend.babysmile.repository.receipt.ReceiptRepository;
+import com.backend.babysmile.repository.vendor.VendorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,17 @@ public class ReceiptService {
         receipt.setCreatedAt(getCurrentDate());
         receiptRepository.save(receipt);
 
+        OrderStatus orderStatus = existingOrder.getOrderStatus();
+        if(orderStatus == OrderStatus.CANCELLED) {
+            return ResponseEntity.ok(new MessageRespond(true, "Order with ID " + request.order_id() + " is cancelled"));
+        }else if(orderStatus == OrderStatus.COMPLETED){
+            return ResponseEntity.ok(new MessageRespond(true, "Order with ID " + request.order_id() + " is already completed"));
+        }else{
+            existingOrder.setOrderStatus(OrderStatus.PROCESSING);
+        }
+
+        int orderTotalQuantity = 0;
+        int orderTotalActualQuantity = 0;
 
         for (String materialId : request.material_quantities().keySet()) {
             OrderMaterial orderMaterial = orderMaterialRepository.findByOrderAndMaterialId(existingOrder, materialId).orElse(null);
@@ -69,6 +82,9 @@ public class ReceiptService {
             int newQuantity = additionalQuantity + existingQuantity;
             orderMaterial.setOrderMaterialActualQuantity(newQuantity);
 
+            orderTotalQuantity += totalQuantity;
+            orderTotalActualQuantity += newQuantity;
+
             if(newQuantity > totalQuantity){
                 return ResponseEntity.ok(new MessageRespond(true, "Material with ID " + materialId + " exceeds the quantity in order"));
             }else if(newQuantity < 0){
@@ -79,12 +95,22 @@ public class ReceiptService {
                 orderMaterial.setOrderMaterialStatus(OrderMaterialStatus.PARTIALLY_DELIVERED);
             }
 
+
+//            ReceiptItem rc = ReceiptItem.builder().orderMaterial(orderMaterial).build();
+//            if(receiptItemRepository.(orderMaterial).isPresent()){
+//                return ResponseEntity.ok(new MessageRespond(true, "Material with ID " + materialId + " already added to receipt"));
+//            }
+
             receiptItemRepository.save(ReceiptItem.builder()
                     .orderMaterial(orderMaterial)
                     .receipt(receipt)
                     .quantity(additionalQuantity)
                     .build()
             );
+
+//            if(orderTotalActualQuantity == orderTotalQuantity) {
+//                existingOrder.setOrderStatus(OrderStatus.);
+//            }
 
             Material material = materialRepository.findByMaterialId(materialId).orElse(null);
             if(material == null) {
@@ -99,6 +125,12 @@ public class ReceiptService {
                 materialRepository.save(material);
             }
         }
+
+        if(orderTotalActualQuantity == orderTotalQuantity) {
+           existingOrder.setOrderStatus(OrderStatus.COMPLETED);
+        }
+        orderRepository.save(existingOrder);
+
         return ResponseEntity.ok(new MessageRespond(false, "Receipt created successfully "));
     }
 
@@ -119,5 +151,14 @@ public class ReceiptService {
 
     public List<ReceiptData> findReceiptsByOrderName(String query){
         return receiptRepository.findByOrderTitle(query).stream().map(ReceiptMapper::toReceiptData).collect(Collectors.toList());
+    }
+
+    public ReceiptData getReceiptDetails(String id) {
+        Receipt rc =  receiptRepository.findById(id).orElse(null);
+        if(rc == null){
+            return null;
+        }else{
+            return ReceiptMapper.toReceiptData(rc);
+        }
     }
 }

@@ -59,6 +59,6 @@ public class Order {
     @JsonManagedReference
     Vendor vendor;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Receipt> receipt;
 }

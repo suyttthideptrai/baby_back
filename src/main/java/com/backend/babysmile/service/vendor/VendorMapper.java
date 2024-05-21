@@ -43,7 +43,7 @@ public class VendorMapper {
                .build();
     }
 
-    public static VendorListData toVendorListData(Vendor vendor) {
+    public static VendorListData toVendorListData(Vendor vendor, int orderBudget) {
         List<String> suppliedTypes = vendor.getVendorMaterialTypes()
                 .stream()
                 .map(vendorMaterialType -> vendorMaterialType.getMaterialType().getTypeName())
@@ -55,8 +55,8 @@ public class VendorMapper {
                 vendor.getVendorEmail(),
                 vendor.getVendorAddress(),
                 vendor.getVendorTaxCode(),
-                vendor.getVendorStatus(),
-                vendor.getVendorOrderBudget(),
+                vendor.getVendorStatus().ordinal(),
+                orderBudget,
                 suppliedTypes
         );
     }

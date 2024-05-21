@@ -11,7 +11,7 @@ public record VendorListData(
         String vendor_email,
         String vendor_address,
         String vendor_tax_code,
-        VendorStatus vendor_status,
+        int vendor_status,
         Integer vendor_order_budget,
         List<String> vendor_supplied_types
 ) {

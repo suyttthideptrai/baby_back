@@ -8,7 +8,6 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Builder
@@ -39,7 +38,7 @@ public class Vendor {
     private String vendorTaxCode;
 
     @Column(name = "vendor_status", nullable = false)
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     private VendorStatus vendorStatus;
 
     @Column(name = "vendor_order_budget", nullable = false ,columnDefinition = "INT DEFAULT 0")

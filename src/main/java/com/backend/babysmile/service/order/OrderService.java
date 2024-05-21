@@ -7,11 +7,15 @@ import com.backend.babysmile.dto.respond.order.OrderListData;
 import com.backend.babysmile.dto.respond.order.OrderMaterialData;
 import com.backend.babysmile.model.entities.Order;
 import com.backend.babysmile.model.entities.OrderMaterial;
+import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.VendorStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.order.OrderMaterialRepository;
 import com.backend.babysmile.repository.order.OrderRepository;
+import com.backend.babysmile.repository.vendor.VendorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,11 +34,19 @@ public class OrderService {
     private MaterialRepository materialRepository;
     @Autowired
     private OrderMaterialRepository orderMaterialRepository;
-
+    @Autowired
+    private VendorRepository vendorRepository;
 
     @Transactional
     public ResponseEntity<MessageRespond> addOrder(NewOrderRequest request) {
         try {
+            Vendor orderVendor = vendorRepository.findById(request.order_vendor_id()).orElse(null);
+            if (orderVendor == null){
+                    return ResponseEntity.badRequest().body(new MessageRespond(true, "Vendor with ID " + request.order_vendor_id() + " not found"));
+            }
+            orderVendor.setVendorStatus(VendorStatus.INORDER);
+            vendorRepository.save(orderVendor);
+
             Order savedOrder = orderRepository.save(mapToEmptyOrder(request));
             long totalPrice = 0L;
             for (String materialId : request.order_materials_quantities().keySet()) {
@@ -70,7 +82,8 @@ public class OrderService {
     }
 
     public List<OrderListData> allOrders() {
-        return orderRepository.findAll()
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderIssuedDate");
+        return orderRepository.findAll(sort)
                 .stream().map(OrderMapper::mapToOrderListData)
                 .collect(Collectors.toList())
                 ;
@@ -95,5 +108,9 @@ public class OrderService {
         return orderMaterialRepository.findAllAscendingSortedById(orderId)
                 .stream().map(OrderMapper::toOrderMaterialData)
                 .collect(Collectors.toList());
+    }
+
+    public Integer getOrderBudgetByVendorId(String vendorId) {
+        return orderRepository.getOrderBudgetByVendorId(vendorId);
     }
 }

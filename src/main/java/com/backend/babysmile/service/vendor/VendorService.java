@@ -9,7 +9,9 @@ import com.backend.babysmile.dto.respond.vendor.VendorListData;
 import com.backend.babysmile.dto.respond.vendor.VendorQuerySuggestData;
 import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.VendorStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
+import com.backend.babysmile.repository.order.OrderRepository;
 import com.backend.babysmile.repository.vendor.VendorRepository;
 import com.backend.babysmile.service.material.MaterialMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class VendorService {
     private VendorRepository repository;
     @Autowired
     private MaterialRepository materialRepository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     public ResponseEntity<MessageRespond> saveVendor(AddVendorRequest request){
         try {
@@ -48,21 +52,37 @@ public class VendorService {
     public List<VendorListData> allVendors() {
         return repository.findAll()
                 .stream()
-                .map(VendorMapper::toVendorListData)
+                .map(vendor -> {
+                    Integer orderBudget = orderRepository.getOrderBudgetByVendorId(vendor.getVendorId());
+                    return VendorMapper.toVendorListData(vendor, orderBudget != null ? orderBudget : 0);
+                })
                 .collect(Collectors.toList());
     }
 
     public List<VendorListData> findByName(String name) {
         List<Vendor> vendors = repository.findByVendorName(name);
         return vendors.stream()
-                .map(VendorMapper::toVendorListData)
+                .map(vendor -> {
+                    Integer orderBudget = orderRepository.getOrderBudgetByVendorId(vendor.getVendorId());
+                    return VendorMapper.toVendorListData(vendor, orderBudget != null ? orderBudget : 0);
+                })
                 .collect(Collectors.toList());
     }
+
+//    public List<VendorListData> findById(String id) {
+//        return repository.findById(id)
+//                .stream()
+//                .map(VendorMapper::toVendorListData)
+//                .collect(Collectors.toList());
+//    }
 
     public List<VendorListData> findById(String id) {
         return repository.findById(id)
                 .stream()
-                .map(VendorMapper::toVendorListData)
+                .map(vendor -> {
+                    Integer orderBudget = orderRepository.getOrderBudgetByVendorId(vendor.getVendorId());
+                    return VendorMapper.toVendorListData(vendor, orderBudget != null ? orderBudget : 0);
+                })
                 .collect(Collectors.toList());
     }
 
@@ -77,7 +97,7 @@ public class VendorService {
         existingVendor.setVendorEmail(updatedVendor.vendor_email());
         existingVendor.setVendorAddress(updatedVendor.vendor_address());
         existingVendor.setVendorTaxCode(updatedVendor.vendor_tax_code());
-        existingVendor.setVendorStatus(updatedVendor.vendor_status());
+        existingVendor.setVendorStatus(VendorStatus.values()[updatedVendor.vendor_status()]);
         repository.save(existingVendor);
         return ResponseEntity
                 .status(HttpStatus.OK)

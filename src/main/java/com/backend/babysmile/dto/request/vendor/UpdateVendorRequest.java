@@ -9,6 +9,6 @@ public record UpdateVendorRequest(
         String vendor_email,
         String vendor_address,
         String vendor_tax_code,
-        VendorStatus vendor_status
+        int vendor_status
 ) {
 }

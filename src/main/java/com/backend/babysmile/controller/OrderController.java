@@ -30,6 +30,7 @@ public class OrderController {
       return orderService.allOrders();
   }
 
+
 @GetMapping("/id/{order_id}")
 public ResponseEntity<OrderData> findOrderById(@PathVariable("order_id") String orderId) {
     return orderService.findOrderById(orderId);
@@ -43,4 +44,9 @@ public ResponseEntity<OrderData> findOrderById(@PathVariable("order_id") String 
     public ResponseEntity<MessageRespond> deleteOrders(@RequestBody String[] orderIds) {
         return orderService.deleteOrders(orderIds);
     }
+
+    @GetMapping("/order_budget/{vendor_id}")
+     public int findOrdersByVendorId(@PathVariable("vendor_id") String vendorId) {
+          return orderService.getOrderBudgetByVendorId(vendorId);
+     }
 }

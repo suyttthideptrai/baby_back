@@ -15,6 +15,7 @@ import com.backend.babysmile.repository.receipt.ReceiptRepository;
 import com.backend.babysmile.repository.vendor.VendorRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,6 +39,7 @@ public class ReceiptService {
     @Autowired
     private ReceiptItemRepository receiptItemRepository;
 
+
     @Transactional
     public ResponseEntity<MessageRespond> create(NewReceiptRequest request){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -49,6 +51,7 @@ public class ReceiptService {
         if(existingOrder == null){
             return ResponseEntity.badRequest().body(new MessageRespond(true, "Order with ID " + request.order_id() + " not found"));
         }
+
         Receipt receipt = new Receipt();
         receipt.setOrder(existingOrder);
         receipt.setCreator(user);
@@ -76,11 +79,18 @@ public class ReceiptService {
                 return ResponseEntity.ok(new MessageRespond(true, "Material with ID " + materialId + " not found in order"));
             }
 
-            int totalQuantity = orderMaterial.getOrderMaterialQuantity();
             int additionalQuantity = request.material_quantities().get(materialId);
+
+            if(additionalQuantity == 0){
+                continue;
+            }
+
+            int totalQuantity = orderMaterial.getOrderMaterialQuantity();
             int existingQuantity = orderMaterial.getOrderMaterialActualQuantity();
             int newQuantity = additionalQuantity + existingQuantity;
             orderMaterial.setOrderMaterialActualQuantity(newQuantity);
+
+
 
             orderTotalQuantity += totalQuantity;
             orderTotalActualQuantity += newQuantity;
@@ -135,7 +145,8 @@ public class ReceiptService {
     }
 
     public List<ReceiptData> allReceipts(){
-        return receiptRepository.findAll().stream().map(ReceiptMapper::toReceiptData).collect(Collectors.toList());
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        return receiptRepository.findAll(sort).stream().map(ReceiptMapper::toReceiptData).collect(Collectors.toList());
     }
 
     public ResponseEntity<MessageRespond> removeReceipt(String[] receiptIds){

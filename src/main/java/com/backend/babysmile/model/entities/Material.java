@@ -1,5 +1,6 @@
 package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -55,6 +56,10 @@ public class Material {
 
     @OneToMany(mappedBy = "material")
     List<MaterialExport> materialExports;
+
+    @Column(nullable = false, name = "hidden_status")
+    @Enumerated(EnumType.ORDINAL)
+    HiddenStatus hiddenStatus = HiddenStatus.FALSE;
 
     public Material(String id) {
         this.materialId = id;

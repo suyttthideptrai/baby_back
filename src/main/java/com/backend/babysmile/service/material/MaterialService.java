@@ -8,6 +8,7 @@ import com.backend.babysmile.dto.respond.material.MaterialData;
 import com.backend.babysmile.dto.respond.material.MaterialExportData;
 import com.backend.babysmile.dto.respond.material.MaterialSuggestData;
 import com.backend.babysmile.model.entities.*;
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.repository.material.MaterialExportRepository;
 import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.vendor.VendorTypeRepository;
@@ -78,8 +79,10 @@ public class MaterialService {
     public ResponseEntity<MessageRespond> deleteMaterials(String[] selectedIds) {
         try {
             Set<String> Ids = new HashSet<>(List.of(selectedIds));
-            materialRepository.deleteAllById(Ids);
+            //System.out.println(Ids);
+            materialRepository.hideAllById(Ids);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return ResponseEntity.status(500)
                     .body(new MessageRespond(true, "Delete failed"));
         }
@@ -89,7 +92,7 @@ public class MaterialService {
 
     public List<MaterialData> findAllMaterials() {
         return materialRepository
-                .findAll()
+                .findAllByHiddenStatus(HiddenStatus.FALSE)
                 .stream()
                 .map(MaterialMapper::toMaterialData)
                 .collect(Collectors.toList());
@@ -136,15 +139,12 @@ public class MaterialService {
     //@Transactional
     public ResponseEntity<MessageRespond> exportMaterials(ExportMaterialRequest request) {
         try {
-            System.out.println(request.material_quantities());
             request.material_quantities().forEach((materialId, quantity) -> {
                 Material material = materialRepository.findById(materialId).orElse(null);
                 if (material == null) {
-                    System.out.println("Material ID: " + materialId + " not found");
                     throw new RuntimeException("Material ID: " + materialId + " not found");
                 }
                 if (material.getMaterialQuantity() < quantity) {
-                    System.out.println("Material export quantity: " + quantity + " exceeds the available quantity: " + material.getMaterialQuantity());
                     throw new RuntimeException("Material export quantity: " + quantity + " exceeds the available quantity: " + material.getMaterialQuantity());
                 }
                 material.setMaterialQuantity(material.getMaterialQuantity() - quantity);

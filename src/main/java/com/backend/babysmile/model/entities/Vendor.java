@@ -1,5 +1,6 @@
 package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.VendorStatus;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -56,6 +57,10 @@ public class Vendor {
     @OneToMany(mappedBy = "vendor")
     @JsonBackReference
     List<Order> orders;
+
+    @Column(nullable = false, name = "hidden_status")
+    @Enumerated(EnumType.ORDINAL)
+    HiddenStatus hiddenStatus = HiddenStatus.FALSE;
 
     public Vendor(String id) {
         this.vendorId = id;

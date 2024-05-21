@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: May 21, 2024 at 10:08 AM
+-- Generation Time: May 21, 2024 at 08:32 PM
 -- Server version: 5.5.65-MariaDB
 -- PHP Version: 8.3.3
 
@@ -35,22 +35,22 @@ CREATE TABLE `materials` (
   `material_unit_of_measure` char(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `material_warehouse_date` date NOT NULL,
   `type_id` int(11) DEFAULT NULL,
-  `material_vendor_id` char(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `material_vendor_id` char(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hidden_status` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `materials`
 --
 
-INSERT INTO `materials` (`material_id`, `material_name`, `material_price`, `material_quantity`, `material_unit_of_measure`, `material_warehouse_date`, `type_id`, `material_vendor_id`) VALUES
-('1B0001', 'vat lieuasd', 300000, 224, 'pa', '2024-05-31', 2, 'EC0001'),
-('A10001', 'AA 1.2V x6 Battery Pack', 45000, 10, 'Pack', '2024-05-07', 3, 'EC0001'),
-('AS0001', 'asdasd', 20000, -1, 'asdas', '2024-05-20', 1, 'AC0001'),
-('AS0002', 'asdasd', 20000, -1, 'asdas', '2024-05-20', 1, 'AC0001'),
-('CX0001', 'Cây xăng', 1200000, -1, 'cây', '2024-05-12', 2, 'AC0001'),
-('GI0001', 'Giấy in A4 Double A', 50000, 99, 'Pack', '2024-05-07', 3, 'EC0001'),
-('GI0002', 'Giấy in A4 Double A', 20000, -1, 'asdas', '2024-05-20', 1, 'AC0001'),
-('SM0001', 'Sample Mat 2', 1200000, -1, 'a', '2024-05-21', 1, 'AC0001');
+INSERT INTO `materials` (`material_id`, `material_name`, `material_price`, `material_quantity`, `material_unit_of_measure`, `material_warehouse_date`, `type_id`, `material_vendor_id`, `hidden_status`) VALUES
+('1B0001', 'vat lieuasd', 300000, 200, 'pa', '2024-05-31', 2, 'EC0001', 0),
+('1B0002', '1Pair Bicycle Brake Handle', 1200000, -1, 'a', '2024-05-21', 1, 'AC0001', 0),
+('A10001', 'AA 1.2V x6 Battery Pack', 45000, 4, 'Pack', '2024-05-07', 3, 'EC0001', 0),
+('AS0001', 'asdasd', 20000, 1, 'asdas', '2024-05-20', 1, 'AC0001', 0),
+('AS0002', 'asdasd', 20000, 1, 'asdas', '2024-05-20', 1, 'AC0001', 0),
+('CX0001', 'Cây xăng', 1200000, 6, 'cây', '2024-05-12', 2, 'AC0001', 0),
+('GI0001', 'Giấy in A4 Double A', 50000, 90, 'Pack', '2024-05-07', 3, 'EC0001', 0);
 
 -- --------------------------------------------------------
 
@@ -73,7 +73,13 @@ INSERT INTO `material_exports` (`export_id`, `export_date`, `export_quantity`, `
 (1, '2024-05-11 17:54:28.000000', 1, 'A10001'),
 (2, '2024-05-11 18:18:11.000000', 1, 'GI0001'),
 (3, '2024-05-11 18:18:37.000000', 1, 'GI0001'),
-(4, '2024-05-11 18:20:22.000000', 10, 'GI0001');
+(4, '2024-05-11 18:20:22.000000', 10, 'GI0001'),
+(5, '2024-05-21 23:06:13.000000', 4, '1B0001'),
+(6, '2024-05-21 23:06:13.000000', 2, 'A10001'),
+(7, '2024-05-21 23:06:41.000000', 2, '1B0001'),
+(8, '2024-05-21 23:06:41.000000', 2, 'A10001'),
+(9, '2024-05-21 23:06:41.000000', 9, 'GI0001'),
+(10, '2024-05-21 23:26:09.000000', 1, 'AS0001');
 
 -- --------------------------------------------------------
 
@@ -110,22 +116,26 @@ CREATE TABLE `orders` (
   `order_title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `order_total_price` bigint(20) DEFAULT NULL,
   `order_user_id` int(10) NOT NULL,
-  `order_vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL
+  `order_vendor_id` char(15) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hidden_status` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `order_approved_date`, `order_delivery_date`, `order_issued_date`, `order_status`, `order_title`, `order_total_price`, `order_user_id`, `order_vendor_id`) VALUES
-('OD0001', NULL, '2024-05-16 07:00:00.000000', '2024-05-07 19:30:58.000000', 2, 'Order văn phòng phẩm tuần 3', 590000, 1, 'EC0001'),
-('OD0002', NULL, '2024-05-23 07:00:00.000000', '2024-05-07 21:03:17.000000', 2, 'sample order hihi haha', 5000000, 1, 'EC0001'),
-('OD0003', NULL, '2024-05-17 07:00:00.000000', '2024-05-08 11:04:11.000000', 2, 'Order 123', 345000, 1, 'EC0001'),
-('OD0004', NULL, '2024-05-15 07:00:00.000000', '2024-05-12 18:28:51.000000', 0, 'Order 3 cây xăng cho nhân viên đổ free', 3600000, 1, 'AC0001'),
-('OD0005', NULL, '2024-05-17 07:00:00.000000', '2024-05-13 22:43:02.000000', 1, 'sample order hihi haha', 41500000, 1, 'EC0001'),
-('OD0006', NULL, '2024-05-24 07:00:00.000000', '2024-05-20 23:04:43.000000', 0, 'sample order hihi haha', 660000, 1, 'AC0001'),
-('OD0007', NULL, '2024-05-29 07:00:00.000000', '2024-05-20 23:19:22.000000', 1, 'asdasd', 45900000, 1, 'EC0001'),
-('OD0008', NULL, '2024-05-22 17:04:11.000000', '2024-05-20 23:42:21.000000', 1, 'asdasdasd', 2025000, 1, 'EC0001');
+INSERT INTO `orders` (`order_id`, `order_approved_date`, `order_delivery_date`, `order_issued_date`, `order_status`, `order_title`, `order_total_price`, `order_user_id`, `order_vendor_id`, `hidden_status`) VALUES
+('OD0001', NULL, '2024-05-16 07:00:00.000000', '2024-05-07 19:30:58.000000', 2, 'Order văn phòng phẩm tuần 3', 590000, 1, 'EC0001', 1),
+('OD0002', NULL, '2024-05-23 07:00:00.000000', '2024-05-07 21:03:17.000000', 2, 'sample order hihi haha', 5000000, 1, 'EC0001', 1),
+('OD0003', NULL, '2024-05-17 07:00:00.000000', '2024-05-08 11:04:11.000000', 2, 'Order 123', 345000, 1, 'EC0001', 1),
+('OD0004', NULL, '2024-05-15 07:00:00.000000', '2024-05-12 18:28:51.000000', 0, 'Order 3 cây xăng cho nhân viên đổ free', 3600000, 1, 'AC0001', 1),
+('OD0005', NULL, '2024-05-17 07:00:00.000000', '2024-05-13 22:43:02.000000', 1, 'sample order hihi haha', 41500000, 1, 'EC0001', 0),
+('OD0006', NULL, '2024-05-24 07:00:00.000000', '2024-05-20 23:04:43.000000', 0, 'sample order hihi haha', 660000, 1, 'AC0001', 0),
+('OD0007', NULL, '2024-05-29 07:00:00.000000', '2024-05-20 23:19:22.000000', 1, 'asdasd', 45900000, 1, 'EC0001', 0),
+('OD0008', NULL, '2024-05-22 17:04:11.000000', '2024-05-20 23:42:21.000000', 1, 'asdasdasd', 2025000, 1, 'EC0001', 0),
+('OD0009', NULL, '2024-05-25 07:00:00.000000', '2024-05-21 17:17:52.000000', 1, 'Order week 4', 223000000, 1, 'AC0001', 0),
+('OD0010', NULL, '2024-05-25 07:00:00.000000', '2024-05-21 23:19:00.000000', 1, 'cay xangs', 24000000, 1, 'AC0001', 0),
+('OD0011', NULL, '2024-05-23 07:00:00.000000', '2024-05-21 23:25:02.000000', 2, 'aaaa', 40000, 1, 'AC0001', 0);
 
 -- --------------------------------------------------------
 
@@ -162,7 +172,11 @@ INSERT INTO `order_materials` (`order_material_id`, `order_material_status`, `or
 (17, 2, 120, 300000, 120, '1B0001', 'OD0007'),
 (18, 1, 2, 45000, 220, 'A10001', 'OD0007'),
 (19, 2, 5, 45000, 5, 'A10001', 'OD0008'),
-(20, 1, 3, 300000, 6, '1B0001', 'OD0008');
+(20, 1, 3, 300000, 6, '1B0001', 'OD0008'),
+(21, 0, 0, 20000, 11112, 'AS0001', 'OD0009'),
+(22, 1, 1, 20000, 38, 'AS0002', 'OD0009'),
+(23, 1, 6, 1200000, 20, 'CX0001', 'OD0010'),
+(24, 2, 2, 20000, 2, 'AS0001', 'OD0011');
 
 -- --------------------------------------------------------
 
@@ -174,27 +188,31 @@ CREATE TABLE `receipts` (
   `receipt_id` char(8) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` datetime NOT NULL,
   `receipt_creator_id` int(10) NOT NULL,
-  `receipt_order_id` char(8) COLLATE utf8mb4_unicode_ci NOT NULL
+  `receipt_order_id` char(8) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `hidden_status` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `receipts`
 --
 
-INSERT INTO `receipts` (`receipt_id`, `created_at`, `receipt_creator_id`, `receipt_order_id`) VALUES
-('GR0001', '2024-05-10 17:41:37', 1, 'OD0001'),
-('GR0002', '2024-05-11 10:42:51', 1, 'OD0002'),
-('GR0003', '2024-05-11 10:43:11', 1, 'OD0002'),
-('GR0005', '2024-05-11 15:28:52', 1, 'OD0002'),
-('GR0007', '2024-05-13 22:22:46', 1, 'OD0003'),
-('GR0008', '2024-05-13 22:43:22', 1, 'OD0005'),
-('GR0009', '2024-05-20 21:03:15', 1, 'OD0005'),
-('GR0010', '2024-05-20 23:20:29', 1, 'OD0007'),
-('GR0011', '2024-05-20 23:21:02', 1, 'OD0007'),
-('GR0012', '2024-05-21 00:17:31', 1, 'OD0008'),
-('GR0013', '2024-05-21 00:18:13', 1, 'OD0008'),
-('GR0014', '2024-05-21 00:19:45', 1, 'OD0008'),
-('GR0015', '2024-05-21 16:49:24', 1, 'OD0008');
+INSERT INTO `receipts` (`receipt_id`, `created_at`, `receipt_creator_id`, `receipt_order_id`, `hidden_status`) VALUES
+('GR0001', '2024-05-10 17:41:37', 1, 'OD0001', 1),
+('GR0002', '2024-05-11 10:42:51', 1, 'OD0002', 1),
+('GR0003', '2024-05-11 10:43:11', 1, 'OD0002', 1),
+('GR0005', '2024-05-11 15:28:52', 1, 'OD0002', 1),
+('GR0007', '2024-05-13 22:22:46', 1, 'OD0003', 1),
+('GR0008', '2024-05-13 22:43:22', 1, 'OD0005', 1),
+('GR0009', '2024-05-20 21:03:15', 1, 'OD0005', 0),
+('GR0010', '2024-05-20 23:20:29', 1, 'OD0007', 0),
+('GR0011', '2024-05-20 23:21:02', 1, 'OD0007', 0),
+('GR0012', '2024-05-21 00:17:31', 1, 'OD0008', 0),
+('GR0013', '2024-05-21 00:18:13', 1, 'OD0008', 0),
+('GR0014', '2024-05-21 00:19:45', 1, 'OD0008', 0),
+('GR0015', '2024-05-21 16:49:24', 1, 'OD0008', 0),
+('GR0016', '2024-05-21 17:18:05', 1, 'OD0009', 0),
+('GR0017', '2024-05-21 23:20:19', 1, 'OD0010', 0),
+('GR0018', '2024-05-21 23:25:29', 1, 'OD0011', 0);
 
 -- --------------------------------------------------------
 
@@ -237,7 +255,10 @@ INSERT INTO `receipt_items` (`receipt_item_id`, `receipt_item_quantity`, `order_
 (25, 1, 20, 'GR0013'),
 (26, 1, 19, 'GR0014'),
 (27, 1, 20, 'GR0014'),
-(28, 1, 20, 'GR0015');
+(28, 1, 20, 'GR0015'),
+(29, 1, 22, 'GR0016'),
+(30, 6, 23, 'GR0017'),
+(31, 2, 24, 'GR0018');
 
 -- --------------------------------------------------------
 
@@ -408,7 +429,18 @@ INSERT INTO `token` (`id`, `expired`, `revoked`, `token`, `token_type`, `user_id
 (1053, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjI4Mzk0NywiZXhwIjoxNzE2MzcwMzQ3fQ.hkXOxET5i0UivAGHER7fdpt3SVf3r8Phvr9oB7P_v6k', 'BEARER', 1),
 (1054, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjI4NDczMiwiZXhwIjoxNzE2MzcxMTMyfQ.cfcePzSBLIMUEU33clHjNks0Bu9StuH_xcqE3JlGdmk', 'BEARER', 1),
 (1055, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjI4NTU5MiwiZXhwIjoxNzE2MzcxOTkyfQ.mwmsqPdjYYYneSbKuEQ5dJHGO4PhPgLNLGEH5R88YKQ', 'BEARER', 1),
-(1056, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjI4NTg2NywiZXhwIjoxNzE2MzcyMjY3fQ.ZWdrLHxFPkxgBdytzlBarRQOIfHzeN_DtP3Zucl-zHE', 'BEARER', 1);
+(1056, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjI4NTg2NywiZXhwIjoxNzE2MzcyMjY3fQ.ZWdrLHxFPkxgBdytzlBarRQOIfHzeN_DtP3Zucl-zHE', 'BEARER', 1),
+(1057, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwMDA4MSwiZXhwIjoxNzE2Mzg2NDgxfQ.HwMQmdhFByfc-P_pnXqzIxGK_F1U0dmrI9M8wFQ3BDk', 'BEARER', 1),
+(1102, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwMzkyNiwiZXhwIjoxNzE2MzkwMzI2fQ.WHNa6CkeAVrJkH4zjPlM4jbznJ4c4sK4wCMq2JgS9KA', 'BEARER', 1),
+(1103, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwNDI0OCwiZXhwIjoxNzE2MzkwNjQ4fQ.fGIDP2f01hC8pdenANX_1J0Sz57CZJf_Liti0UgrIqQ', 'BEARER', 1),
+(1104, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwNDI5NSwiZXhwIjoxNzE2MzkwNjk1fQ.YqT-RLLhP54F6-FAsKCI0OkbwOFPFx4Z_UAMZuv7xd4', 'BEARER', 1),
+(1105, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwNDQzOSwiZXhwIjoxNzE2MzkwODM5fQ.oKVMQoRlX4TnHGn7I4wCQQfjnnhxQW0WmDhAFRbwDi8', 'BEARER', 1),
+(1152, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwNzc4NCwiZXhwIjoxNzE2Mzk0MTg0fQ.o6b6BoReo678p6kWhuCITNd3wpf3bC_Jykf4trR3-R4', 'BEARER', 1),
+(1153, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMwODQxMCwiZXhwIjoxNzE2Mzk0ODEwfQ.PAeQ9hEk45cdZmOc0xFiUBJ34S2aeTC7XXpjXk6N-5A', 'BEARER', 1),
+(1154, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMxMDE5MSwiZXhwIjoxNzE2Mzk2NTkxfQ.3Fbt0oPbBnpE4aMEEIhIQbaMOJeez7AXQyZIE7vqV4o', 'BEARER', 1),
+(1202, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMxODU0NywiZXhwIjoxNzE2NDA0OTQ3fQ.z6Q3-MoUujDjsgKgDrWOlG9LmIK67JM29359i_5WoqI', 'BEARER', 1),
+(1252, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMxOTMwOCwiZXhwIjoxNzE2NDA1NzA4fQ.cv6v6RyUJfzPWErPQ3EJpAUhRDVRb5BB6zn4DrhgjCw', 'BEARER', 1),
+(1302, b'0', b'0', 'eyJhbGciOiJIUzI1NiJ9.eyJyb2wiOlsiQURNIl0sInN1YiI6ImJhYnlzbWlsZV9hZG1pbiIsImlhdCI6MTcxNjMyMjUzNywiZXhwIjoxNzE2NDA4OTM3fQ.qQa0MskVfhyIvoI_ZMVynCHOXyPCjdmDejrIISRfIKY', 'BEARER', 1);
 
 -- --------------------------------------------------------
 
@@ -425,7 +457,7 @@ CREATE TABLE `token_seq` (
 --
 
 INSERT INTO `token_seq` (`next_val`) VALUES
-(1151);
+(1401);
 
 -- --------------------------------------------------------
 
@@ -484,18 +516,20 @@ CREATE TABLE `vendors` (
   `vendor_order_budget` int(11) NOT NULL DEFAULT '0',
   `vendor_phone` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `vendor_status` tinyint(4) NOT NULL,
-  `vendor_tax_code` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+  `vendor_tax_code` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `hidden_status` tinyint(4) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `vendors`
 --
 
-INSERT INTO `vendors` (`vendor_id`, `vendor_address`, `vendor_email`, `vendor_name`, `vendor_order_budget`, `vendor_phone`, `vendor_status`, `vendor_tax_code`) VALUES
-('AC0001', '159 Đỗ Ngọc Dua', 'asdfasjf@kaf.comasd', 'asdasd', 0, '0364829936', 2, '4568155465sa'),
-('AC0002', '159 Đỗ Ngọc Duasd', 'sample@email.casom', 'ABC comp1', 0, '999102322', 2, '4568155465asd'),
-('EC0001', '159 Nguyễn Trãi', 'sample@email.com', 'EVEREADY CO', 0, '99910232', 1, 'aow1023995'),
-('EC0002', '159 Nguyễn Trãi', 'sample@email.com', 'EVEREADY CO 2', 0, '99910232', 2, 'aow1023995');
+INSERT INTO `vendors` (`vendor_id`, `vendor_address`, `vendor_email`, `vendor_name`, `vendor_order_budget`, `vendor_phone`, `vendor_status`, `vendor_tax_code`, `hidden_status`) VALUES
+('AC0001', '159 Đỗ Ngọc Dua', 'asdfasjf@kaf.comasd', 'asdasd', 0, '0364829936', 2, '4568155465sa', 0),
+('AC0002', '159 Đỗ Ngọc Duasd', 'sample@email.casom', 'ABC comp1', 0, '999102322', 2, '4568155465asd', 0),
+('DC0001', 'asd01234ksad', 'sample@email.casom', 'DE Company', 0, '023141243', 1, '4568155465asd', 0),
+('EC0001', '159 Nguyễn Trãi', 'sample@email.com', 'EVEREADY CO', 0, '99910232', 2, 'aow1023995', 0),
+('EC0002', '159 Nguyễn Trãi', 'sample@email.com', 'EVEREADY CO 2', 0, '99910232', 1, 'aow1023995', 0);
 
 -- --------------------------------------------------------
 
@@ -614,7 +648,7 @@ ALTER TABLE `vendor_supplied_types`
 -- AUTO_INCREMENT for table `material_exports`
 --
 ALTER TABLE `material_exports`
-  MODIFY `export_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `export_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `material_types`
@@ -626,13 +660,13 @@ ALTER TABLE `material_types`
 -- AUTO_INCREMENT for table `order_materials`
 --
 ALTER TABLE `order_materials`
-  MODIFY `order_material_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `order_material_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `receipt_items`
 --
 ALTER TABLE `receipt_items`
-  MODIFY `receipt_item_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `receipt_item_id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `vendor_supplied_types`

@@ -5,6 +5,7 @@ import com.backend.babysmile.dto.request.receipt.NewReceiptRequest;
 import com.backend.babysmile.dto.respond.MessageRespond;
 import com.backend.babysmile.dto.respond.receipt.ReceiptData;
 import com.backend.babysmile.model.entities.*;
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.OrderMaterialStatus;
 import com.backend.babysmile.model.enums.OrderStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
@@ -22,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.backend.babysmile.utils.LocalTime.getCurrentDate;
@@ -144,19 +146,22 @@ public class ReceiptService {
         return ResponseEntity.ok(new MessageRespond(false, "Receipt created successfully "));
     }
 
-    public List<ReceiptData> allReceipts(){
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        return receiptRepository.findAll(sort).stream().map(ReceiptMapper::toReceiptData).collect(Collectors.toList());
-    }
+//    public List<ReceiptData> allReceipts(){
+//        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+//        return receiptRepository.findAll(sort).stream().map(ReceiptMapper::toReceiptData).collect(Collectors.toList());
+//    }
 
+    public List<ReceiptData> allReceipts() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        return receiptRepository
+                .findAllByHiddenStatus(HiddenStatus.FALSE, sort)
+                .stream()
+                .map(ReceiptMapper::toReceiptData)
+                .collect(Collectors.toList());
+    }
     public ResponseEntity<MessageRespond> removeReceipt(String[] receiptIds){
-            for (String receiptId : receiptIds) {
-               Receipt existingReceipt = receiptRepository.findById(receiptId).orElse(null);
-               if(existingReceipt == null){
-                     return ResponseEntity.badRequest().body(new MessageRespond(true, "Receipt with ID " + receiptId + " not found"));
-               }
-               receiptRepository.delete(existingReceipt);
-            }
+        Set<String> receiptIdSet = Set.of(receiptIds);
+        receiptRepository.hideReceiptByIds(receiptIdSet);
         return ResponseEntity.ok(new MessageRespond(false, "Receipts removed successfully"));
     }
 

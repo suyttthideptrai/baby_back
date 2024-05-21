@@ -8,6 +8,7 @@ import com.backend.babysmile.dto.respond.order.OrderMaterialData;
 import com.backend.babysmile.model.entities.Order;
 import com.backend.babysmile.model.entities.OrderMaterial;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.VendorStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.order.OrderMaterialRepository;
@@ -20,7 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.backend.babysmile.service.order.OrderMapper.mapToEmptyOrder;
@@ -70,9 +73,8 @@ public class OrderService {
     }
     public ResponseEntity<MessageRespond> deleteOrders(String[] orderIds) {
         try {
-            for (String orderId : orderIds) {
-                orderRepository.deleteById(orderId);
-            }
+            Set<String> ids = new HashSet<>(List.of(orderIds));
+            orderRepository.hideAllById(ids);
             return ResponseEntity.ok(new MessageRespond(false, "Orders deleted successfully"));
         } catch (Exception e) {
             System.err.println("Error occurred while deleting orders: " + e.getMessage());
@@ -83,7 +85,7 @@ public class OrderService {
 
     public List<OrderListData> allOrders() {
         Sort sort = Sort.by(Sort.Direction.DESC, "orderIssuedDate");
-        return orderRepository.findAll(sort)
+        return orderRepository.findAllByHiddenStatus(HiddenStatus.FALSE, sort)
                 .stream().map(OrderMapper::mapToOrderListData)
                 .collect(Collectors.toList())
                 ;

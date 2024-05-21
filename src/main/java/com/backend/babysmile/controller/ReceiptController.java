@@ -33,7 +33,7 @@ public class ReceiptController {
         return receiptService.getReceiptDetails(id);
     }
 
-    @DeleteMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<MessageRespond> deleteReceipts(@RequestBody String[] receiptIds) {
         return receiptService.removeReceipt(receiptIds);
     }

@@ -8,7 +8,10 @@ import com.backend.babysmile.dto.respond.material.MaterialSuggestData;
 import com.backend.babysmile.dto.respond.vendor.VendorListData;
 import com.backend.babysmile.dto.respond.vendor.VendorQuerySuggestData;
 import com.backend.babysmile.model.entities.Material;
+import com.backend.babysmile.model.entities.Order;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.HiddenStatus;
+import com.backend.babysmile.model.enums.OrderStatus;
 import com.backend.babysmile.model.enums.VendorStatus;
 import com.backend.babysmile.repository.material.MaterialRepository;
 import com.backend.babysmile.repository.order.OrderRepository;
@@ -50,7 +53,7 @@ public class VendorService {
     }
 
     public List<VendorListData> allVendors() {
-        return repository.findAll()
+        return repository.findAllByHiddenStatus(HiddenStatus.FALSE)
                 .stream()
                 .map(vendor -> {
                     Integer orderBudget = orderRepository.getOrderBudgetByVendorId(vendor.getVendorId());
@@ -99,6 +102,14 @@ public class VendorService {
         existingVendor.setVendorTaxCode(updatedVendor.vendor_tax_code());
         existingVendor.setVendorStatus(VendorStatus.values()[updatedVendor.vendor_status()]);
         repository.save(existingVendor);
+
+        if(updatedVendor.vendor_status() == VendorStatus.INACTIVE.ordinal()){
+            List<Order> orders = orderRepository.findByVendorId(updatedVendor.vendor_id());
+            orders.forEach(order -> {
+                order.setOrderStatus(OrderStatus.CANCELLED);
+                orderRepository.save(order);
+            });
+        }
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new MessageRespond(false, "Vendor with Id: " + updatedVendor.vendor_id() + " has been updated successfully"));
@@ -107,7 +118,7 @@ public class VendorService {
     public ResponseEntity<MessageRespond> removeVendors(String[] vendorId) {
         try {
             Set<String> Ids = new HashSet<>(List.of(vendorId));
-            repository.deleteAllById(Ids);
+            repository.hideAllByIds(Ids);
         }catch (Exception e){
             return ResponseEntity.status(500)
                     .body(new MessageRespond(true, "Delete failed"));

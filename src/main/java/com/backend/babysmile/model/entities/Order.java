@@ -1,5 +1,6 @@
 package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -58,6 +59,10 @@ public class Order {
     @JoinColumn(name = "order_vendor_id", nullable = false)
     @JsonManagedReference
     Vendor vendor;
+
+    @Column(nullable = false, name = "hidden_status")
+    @Enumerated(EnumType.ORDINAL)
+    HiddenStatus hiddenStatus = HiddenStatus.FALSE;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Receipt> receipt;

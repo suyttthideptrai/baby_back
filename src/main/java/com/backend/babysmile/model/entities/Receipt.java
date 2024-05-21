@@ -1,5 +1,6 @@
 package com.backend.babysmile.model.entities;
 
+import com.backend.babysmile.model.enums.HiddenStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,6 +39,10 @@ public class Receipt {
             nullable = false, name = "receipt_order_id", columnDefinition = "CHAR(8)"
     )
     Order order;
+
+    @Column(nullable = false, name = "hidden_status")
+    @Enumerated(EnumType.ORDINAL)
+    HiddenStatus hiddenStatus = HiddenStatus.FALSE;
 
     @OneToMany(mappedBy = "receipt", cascade = CascadeType.REMOVE)
 //    @Column(nullable = false, name = "receipt_item")

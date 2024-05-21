@@ -133,25 +133,29 @@ public class MaterialService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    //@Transactional
     public ResponseEntity<MessageRespond> exportMaterials(ExportMaterialRequest request) {
         try {
+            System.out.println(request.material_quantities());
             request.material_quantities().forEach((materialId, quantity) -> {
                 Material material = materialRepository.findById(materialId).orElse(null);
                 if (material == null) {
+                    System.out.println("Material ID: " + materialId + " not found");
                     throw new RuntimeException("Material ID: " + materialId + " not found");
                 }
                 if (material.getMaterialQuantity() < quantity) {
+                    System.out.println("Material export quantity: " + quantity + " exceeds the available quantity: " + material.getMaterialQuantity());
                     throw new RuntimeException("Material export quantity: " + quantity + " exceeds the available quantity: " + material.getMaterialQuantity());
                 }
                 material.setMaterialQuantity(material.getMaterialQuantity() - quantity);
                 materialRepository.save(material);
                 Date currentDateTime = getCurrentDate();
-                materialExportRepository.save(MaterialExport.builder()
+                MaterialExport materialExport = MaterialExport.builder()
                         .material(material)
                         .quantity(quantity)
                         .exportDate(currentDateTime)
-                        .build());
+                        .build();
+                materialExportRepository.save(materialExport);
             });
             return ResponseEntity.status(200)
                     .body(new MessageRespond(false, "Exported successfully"));

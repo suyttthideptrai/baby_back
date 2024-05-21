@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 
@@ -16,9 +17,10 @@ import java.util.Date;
 @Table(name = "material_exports")
 public class MaterialExport {
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    @Column(nullable = false, name =  "export_id")
-    Long id;
+    @GeneratedValue(generator = "export-id-generator")
+    @GenericGenerator(name = "export-id-generator",  type = com.backend.babysmile.service.material.ExportIdGenerator.class)
+    @Column(nullable = false, name =  "export_id", columnDefinition =  "CHAR(15)", unique = true, length = 15)
+    String id;
 
     @ManyToOne
     @JoinColumn(

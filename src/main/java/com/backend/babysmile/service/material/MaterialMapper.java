@@ -68,6 +68,7 @@ public class MaterialMapper {
     public static MaterialExportData toExportData(MaterialExport material)
     {
         return new MaterialExportData(
+                material.getId(),
                 material.getMaterial().getMaterialId(),
                 material.getMaterial().getMaterialName(),
                 material.getQuantity(),

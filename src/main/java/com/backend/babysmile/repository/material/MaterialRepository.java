@@ -27,6 +27,9 @@ public interface MaterialRepository extends JpaRepository<Material, String> {
     @Query("SELECT m.materialPrice FROM Material m WHERE m.materialId = :id")
     Long findMaterialPriceByMaterialId(@Param("id") String materialId);
 
+    @Query("SELECT m FROM Material m WHERE m.vendor.vendorId = :vendorId AND m.hiddenStatus = 0")
+    List<Material> findAllByVendorId(@Param("vendorId") String vendorId);  // Corrected query
+
     @Query("SELECT m FROM Material m WHERE m.vendor.vendorId = :vendor_id AND m.materialName LIKE %:material_name% AND m.hiddenStatus = 0")
     List<Material> findByVendorIdAndMaterialNameLike(@Param("vendor_id")String vendorId,@Param("material_name") String materialName);
 

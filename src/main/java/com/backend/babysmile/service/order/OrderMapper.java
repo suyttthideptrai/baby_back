@@ -5,6 +5,7 @@ import com.backend.babysmile.dto.respond.order.OrderData;
 import com.backend.babysmile.dto.respond.order.OrderListData;
 import com.backend.babysmile.dto.respond.order.OrderMaterialData;
 import com.backend.babysmile.model.entities.*;
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.OrderStatus;
 import com.backend.babysmile.model.enums.OrderMaterialStatus;
 
@@ -34,6 +35,7 @@ public class OrderMapper {
               emptyOrder.setOrderTitle(request.order_title());
               emptyOrder.setUser(new User(request.order_creator_id()));
               emptyOrder.setVendor(new Vendor(request.order_vendor_id()));
+              emptyOrder.setHiddenStatus(HiddenStatus.FALSE);
               return emptyOrder;
           }
 

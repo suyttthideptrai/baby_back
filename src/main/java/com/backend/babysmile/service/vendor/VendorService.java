@@ -129,15 +129,12 @@ public class VendorService {
 
     public List<MaterialSuggestData> findMaterialsByVendorId(String vendorId){
         Optional<Vendor> vendor = repository.findById(vendorId);
-        List<Material> materials;
         if(vendor.isPresent()){
-            materials = vendor.get().getMaterials();
+            return materialRepository.findAllByVendorId(vendorId).stream().map(MaterialMapper::toMaterialVendorSuggestData)
+                    .collect(Collectors.toList());
         }else{
             return null;
         }
-        return materials
-                .stream().map(MaterialMapper::toMaterialVendorSuggestData)
-                .collect(Collectors.toList());
     }
 
     public List<VendorQuerySuggestData> querySuggestName(String vendorName){

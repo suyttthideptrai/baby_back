@@ -58,6 +58,7 @@ public class ReceiptService {
         receipt.setOrder(existingOrder);
         receipt.setCreator(user);
         receipt.setCreatedAt(getCurrentDate());
+        receipt.setHiddenStatus(HiddenStatus.FALSE);
         receiptRepository.save(receipt);
 
         OrderStatus orderStatus = existingOrder.getOrderStatus();

@@ -5,6 +5,7 @@ import com.backend.babysmile.dto.respond.vendor.VendorListData;
 import com.backend.babysmile.dto.respond.vendor.VendorQuerySuggestData;
 import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.HiddenStatus;
 import com.backend.babysmile.model.enums.VendorStatus;
 
 import java.time.Instant;
@@ -40,6 +41,7 @@ public class VendorMapper {
                .vendorTaxCode(data.vendor_tax_code())
                .vendorStatus(VendorStatus.INACTIVE)
                .vendorOrderBudget(0)
+               .hiddenStatus(HiddenStatus.FALSE)
                .build();
     }
 

@@ -9,6 +9,7 @@ import com.backend.babysmile.model.entities.Material;
 import com.backend.babysmile.model.entities.MaterialExport;
 import com.backend.babysmile.model.entities.MaterialType;
 import com.backend.babysmile.model.entities.Vendor;
+import com.backend.babysmile.model.enums.HiddenStatus;
 
 import java.util.Date;
 //import com.backend.babysmile.model.entities.VendorMaterial;
@@ -44,6 +45,7 @@ public class MaterialMapper {
                 .vendor(
                         new Vendor(request.material_vendor_id())
                 )
+                .hiddenStatus(HiddenStatus.FALSE)
                 .build();
     }
 
